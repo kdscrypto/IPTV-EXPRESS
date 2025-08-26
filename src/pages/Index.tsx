@@ -16,6 +16,11 @@ const Index = () => {
     planName: '',
     price: 0
   });
+  const [selectedPlan, setSelectedPlan] = useState<{
+    id: string;
+    name: string;
+    price: number;
+  } | null>(null);
 
   // Configuration des plans (pourrait venir d'une API ou config)
   const getPlanName = (planId: string) => {
@@ -27,71 +32,27 @@ const Index = () => {
     return plans[planId as keyof typeof plans] || 'Plan IPTV';
   };
 
-  const handleSelectPlan = async (planId: string, price: number) => {
-    try {
-      // Simuler un appel API pour créer une session de paiement Stripe
-      // En production, ceci appellerait votre backend avec l'edge function create-payment
-      
-      toast({
-        title: "Configuration du paiement...",
-        description: "Redirection vers Stripe en cours...",
-      });
-
-      // Simuler un délai d'API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Pour la démo, on simule une erreur Stripe pour montrer le fallback crypto
-      const simulateStripeError = Math.random() < 0.3; // 30% de chance d'erreur pour la démo
-      
-      if (simulateStripeError) {
-        toast({
-          title: "Service de paiement temporairement indisponible",
-          description: "Nous vous proposons le paiement par cryptomonnaie comme alternative sécurisée.",
-          variant: "destructive"
-        });
-        
-        // Ouvrir automatiquement le modal crypto après un délai
-        setTimeout(() => {
-          setCryptoModal({
-            isOpen: true,
-            planName: getPlanName(planId),
-            price
-          });
-        }, 2000);
-        
-        return;
-      }
-
-      // En production, vous recevriez l'URL de Stripe Checkout depuis votre backend
-      // const stripeCheckoutUrl = `https://checkout.stripe.com/c/pay/...`;
-      
-      toast({
-        title: "Redirection vers Stripe Checkout",
-        description: "Une page sécurisée s'ouvre pour finaliser votre paiement.",
-      });
-
-      // Simuler l'ouverture de Stripe Checkout
-      // En production: window.open(stripeCheckoutUrl, '_blank');
-      console.log(`Redirection vers Stripe Checkout pour ${getPlanName(planId)} - ${price}€`);
-      
-      // Pour la démo, ouvrir une page Stripe générique
-      window.open('https://stripe.com', '_blank');
-      
-    } catch (err) {
-      console.error('Erreur lors de la création du paiement:', err);
-      
-      toast({
-        title: "Erreur de connexion",
-        description: "Problème technique. Le paiement cryptomonnaie est disponible.",
-        variant: "destructive"
-      });
-      
-      setCryptoModal({
-        isOpen: true,
-        planName: getPlanName(planId),
-        price
+  const handleSelectPlan = (planId: string, price: number) => {
+    // Sauvegarder le plan sélectionné
+    setSelectedPlan({
+      id: planId,
+      name: getPlanName(planId),
+      price
+    });
+    
+    // Rediriger vers le formulaire d'activation
+    const activationSection = document.getElementById('activation');
+    if (activationSection) {
+      activationSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
       });
     }
+
+    toast({
+      title: "Plan sélectionné !",
+      description: `Remplissez le formulaire ci-dessous pour ${getPlanName(planId)}`,
+    });
   };
 
   return (
@@ -150,7 +111,10 @@ const Index = () => {
         <HeroSection />
         <FeaturesSection />
         <PricingSection onSelectPlan={handleSelectPlan} />
-        <ActivationForm />
+        <ActivationForm 
+          selectedPlan={selectedPlan}
+          onClearPlan={() => setSelectedPlan(null)}
+        />
         <FAQSection />
         <ContactSection />
       </main>

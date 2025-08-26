@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
 
 interface ActivationFormData {
   email: string;
@@ -14,7 +16,18 @@ interface ActivationFormData {
   deviceInfo?: string;
 }
 
-const ActivationForm = () => {
+interface SelectedPlan {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface ActivationFormProps {
+  selectedPlan?: SelectedPlan | null;
+  onClearPlan?: () => void;
+}
+
+const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ActivationFormData>({
     email: '',
@@ -47,13 +60,52 @@ const ActivationForm = () => {
       return;
     }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    if (!selectedPlan) {
+      toast({
+        title: "Plan non sélectionné",
+        description: "Veuillez d'abord choisir un plan d'abonnement.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
-    toast({
-      title: "Demande d'activation envoyée !",
-      description: "Vous recevrez vos identifiants par email dans les 5 minutes.",
-    });
+    try {
+      // Préparer les données pour WhatsApp
+      const whatsappData = {
+        email: formData.email,
+        device: getDeviceLabel(formData.device),
+        deviceInfo: formData.deviceInfo || '',
+        planName: selectedPlan.name,
+        planPrice: selectedPlan.price
+      };
+
+      // Envoyer vers WhatsApp
+      const message = sendToWhatsApp(whatsappData);
+
+      toast({
+        title: "Redirection vers WhatsApp",
+        description: "Votre demande est automatiquement transférée à notre support.",
+      });
+
+      // Réinitialiser le formulaire après envoi
+      setTimeout(() => {
+        setFormData({
+          email: '',
+          confirmEmail: '',
+          device: '',
+          deviceInfo: ''
+        });
+        onClearPlan?.();
+      }, 2000);
+
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ouvrir WhatsApp. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    }
 
     setIsSubmitting(false);
   };
@@ -86,8 +138,55 @@ const ActivationForm = () => {
                 Informations d'activation
               </CardTitle>
               <CardDescription className="text-base">
-                Vos informations sont sécurisées et utilisées uniquement pour l'activation de votre service
+                Vos informations sont sécurisées et envoyées directement à notre support WhatsApp
               </CardDescription>
+              
+              {/* Plan sélectionné */}
+              {selectedPlan && (
+                <div className="mt-4 p-4 bg-gradient-primary/10 rounded-lg border border-primary/20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="bg-gradient-primary text-white">
+                        Plan sélectionné
+                      </Badge>
+                      <span className="font-semibold text-lg">
+                        {selectedPlan.name} - {selectedPlan.price}€
+                      </span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        onClearPlan?.();
+                        // Retourner à la section pricing
+                        const pricingSection = document.getElementById('pricing');
+                        if (pricingSection) {
+                          pricingSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Changer
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Message si aucun plan sélectionné */}
+              {!selectedPlan && (
+                <div className="mt-4 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+                  <div className="flex items-center gap-3">
+                    <ArrowUp className="w-5 h-5 text-destructive" />
+                    <div>
+                      <p className="font-semibold text-destructive">Plan non sélectionné</p>
+                      <p className="text-sm text-muted-foreground">
+                        Veuillez d'abord choisir un plan d'abonnement ci-dessus
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardHeader>
 
             <CardContent>
@@ -182,7 +281,7 @@ const ActivationForm = () => {
                   variant="premium" 
                   size="lg" 
                   className="w-full"
-                  disabled={isSubmitting || !formData.email || !formData.confirmEmail || !formData.device}
+                  disabled={isSubmitting || !formData.email || !formData.confirmEmail || !formData.device || !selectedPlan}
                 >
                   {isSubmitting ? (
                     <>
@@ -192,7 +291,7 @@ const ActivationForm = () => {
                   ) : (
                     <>
                       <CheckCircle className="w-5 h-5 mr-2" />
-                      Envoyer la demande d'activation
+                      Envoyer vers WhatsApp Support
                     </>
                   )}
                 </Button>
@@ -203,9 +302,9 @@ const ActivationForm = () => {
           {/* Process Steps */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { step: "1", title: "Formulaire", desc: "Remplissez vos informations" },
-              { step: "2", title: "Validation", desc: "Nous traitons votre demande" },
-              { step: "3", title: "Activation", desc: "Recevez vos identifiants par email" }
+              { step: "1", title: "Sélection", desc: "Choisissez votre plan IPTV" },
+              { step: "2", title: "Formulaire", desc: "Remplissez vos informations" },
+              { step: "3", title: "WhatsApp", desc: "Envoi automatique vers le support" }
             ].map((item, index) => (
               <div key={index} className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-primary text-white rounded-full text-xl font-bold mb-3">
