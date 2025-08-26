@@ -17,7 +17,7 @@ Infos supplementaires: ${data.deviceInfo || 'Aucune'}
 Demande envoyee le: ${new Date().toLocaleString('fr-FR')}`;
 
   const encodedMessage = encodeURIComponent(message);
-  const whatsappUrl = `https://wa.me/${phoneNumber.replace('+', '')}?text=${encodedMessage}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber.replace('+', '')}&text=${encodedMessage}`;
   
   // Ouvrir WhatsApp
   window.open(whatsappUrl, '_blank');
