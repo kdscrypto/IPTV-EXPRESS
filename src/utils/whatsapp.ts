@@ -5,8 +5,10 @@ export const sendToWhatsApp = (data: {
   planName: string;
   planPrice: number;
 }) => {
-  const phoneNumber = "+237694564763";
+  // Numéro de téléphone au format international (sans le +)
+  const phoneNumber = "237694564763";
   
+  // Message simplifié pour éviter les problèmes d'encodage
   const message = `NOUVELLE DEMANDE IPTV EXPRESS
 
 Email: ${data.email}
@@ -16,10 +18,15 @@ Infos supplementaires: ${data.deviceInfo || 'Aucune'}
 
 Demande envoyee le: ${new Date().toLocaleString('fr-FR')}`;
 
+  // Encoder le message pour l'URL
   const encodedMessage = encodeURIComponent(message);
-  const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber.replace('+', '')}&text=${encodedMessage}`;
   
-  // Ouvrir WhatsApp
+  // Utiliser wa.me qui est l'URL officielle recommandée par WhatsApp
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  
+  console.log('WhatsApp URL:', whatsappUrl);
+  
+  // Ouvrir WhatsApp dans un nouvel onglet
   window.open(whatsappUrl, '_blank');
   
   return message;
