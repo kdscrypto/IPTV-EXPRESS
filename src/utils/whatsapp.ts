@@ -7,14 +7,14 @@ export const sendToWhatsApp = (data: {
 }) => {
   const phoneNumber = "+237694564763";
   
-  const message = `🎬 NOUVELLE DEMANDE IPTV EXPRESS
+  const message = `NOUVELLE DEMANDE IPTV EXPRESS
 
-📧 Email: ${data.email}
-📱 Appareil: ${data.device}
-💳 Pack choisi: ${data.planName} - ${data.planPrice}€
-ℹ️ Infos supplémentaires: ${data.deviceInfo || 'Aucune'}
+Email: ${data.email}
+Appareil: ${data.device}
+Pack choisi: ${data.planName} - ${data.planPrice}EUR
+Infos supplementaires: ${data.deviceInfo || 'Aucune'}
 
-Demande envoyée le: ${new Date().toLocaleString('fr-FR')}`;
+Demande envoyee le: ${new Date().toLocaleString('fr-FR')}`;
 
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${phoneNumber.replace('+', '')}?text=${encodedMessage}`;
