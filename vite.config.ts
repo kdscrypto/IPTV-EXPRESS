@@ -19,4 +19,21 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    cssCodeSplit: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return 'assets/style.[hash].css';
+          }
+          return 'assets/[name].[hash].[ext]';
+        },
+      },
+    },
+  },
+  css: {
+    devSourcemap: true,
+  },
 }));
