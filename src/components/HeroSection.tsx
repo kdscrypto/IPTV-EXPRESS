@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Shield, Users } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
+import DemoModal from "@/components/DemoModal";
 
 const HeroSection = () => {
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
   const scrollToPricing = () => {
     const pricingSection = document.getElementById('pricing');
     pricingSection?.scrollIntoView({ behavior: 'smooth' });
@@ -42,7 +45,7 @@ const HeroSection = () => {
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none">
             <span className="gradient-text">IPTV</span>
             <br />
-            <span className="text-foreground">Illimité</span>
+            <span className="text-foreground">Express</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
@@ -61,7 +64,7 @@ const HeroSection = () => {
               Commencer maintenant
               <PlayCircle className="w-5 h-5 transition-transform group-hover:scale-110" />
             </Button>
-            <Button variant="glass" size="xl">
+            <Button variant="glass" size="xl" onClick={() => setIsDemoOpen(true)}>
               Voir la démo
             </Button>
           </div>
@@ -81,6 +84,8 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
+
+      <DemoModal isOpen={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
     </section>
   );
 };

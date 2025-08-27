@@ -40,11 +40,11 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-2xl font-black text-primary">IPTV</h3>
-                <p className="text-sm text-muted-foreground">Premium</p>
+                <p className="text-sm text-muted-foreground">Express</p>
               </div>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Le leader français de l'IPTV premium avec plus de 15,000 chaînes 
+              Le leader français de l'IPTV express avec plus de 15,000 chaînes 
               et 80,000 contenus VOD. Qualité 4K, support 24/7.
             </p>
             
@@ -102,10 +102,10 @@ const Footer = () => {
                 <div>
                   <p className="font-medium">Email</p>
                   <a 
-                    href="mailto:support@iptv-premium.com" 
+                    href="mailto:support@iptv-express.fr" 
                     className="text-muted-foreground hover:text-primary text-sm transition-colors"
                   >
-                    support@iptv-premium.com
+                    support@iptv-express.fr
                   </a>
                 </div>
               </div>
@@ -115,10 +115,10 @@ const Footer = () => {
                 <div>
                   <p className="font-medium">Téléphone</p>
                   <a 
-                    href="tel:+33123456789" 
+                    href="tel:+33142867392" 
                     className="text-muted-foreground hover:text-primary text-sm transition-colors"
                   >
-                    +33 1 XX XX XX XX
+                    +33 1 42 86 73 92
                   </a>
                 </div>
               </div>
@@ -157,7 +157,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
               <p className="text-muted-foreground text-sm">
-                © {currentYear} IPTV Premium. Tous droits réservés.
+                © {currentYear} IPTV Express. Tous droits réservés.
               </p>
               <p className="text-muted-foreground text-xs mt-1">
                 Société française - SIRET : 123 456 789 00012

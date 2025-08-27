@@ -64,13 +64,13 @@ const Index = () => {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            "name": "IPTV Premium",
-            "description": "Service IPTV premium avec plus de 15000 chaînes TV et 80000 contenus VOD en qualité 4K",
-            "url": "https://iptv-premium.com",
-            "logo": "https://iptv-premium.com/logo.png",
+            "name": "IPTV Express",
+            "description": "Service IPTV express avec plus de 15000 chaînes TV et 80000 contenus VOD en qualité 4K",
+            "url": "https://iptv-express.fr",
+            "logo": "https://iptv-express.fr/logo.png",
             "sameAs": [
-              "https://www.facebook.com/iptvpremium",
-              "https://twitter.com/iptvpremium"
+              "https://www.facebook.com/iptvexpress",
+              "https://twitter.com/iptvexpress"
             ],
             "contactPoint": {
               "@type": "ContactPoint",
