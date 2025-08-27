@@ -14,13 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      content_sources: {
+        Row: {
+          api_url: string
+          created_at: string
+          error_message: string | null
+          id: string
+          last_sync: string | null
+          name: string
+          sync_status: string | null
+        }
+        Insert: {
+          api_url: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync?: string | null
+          name: string
+          sync_status?: string | null
+        }
+        Update: {
+          api_url?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync?: string | null
+          name?: string
+          sync_status?: string | null
+        }
+        Relationships: []
+      }
+      media_content: {
+        Row: {
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          external_id: string | null
+          genre: string | null
+          id: string
+          image_url: string
+          metadata: Json | null
+          priority: number | null
+          release_date: string | null
+          source: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          external_id?: string | null
+          genre?: string | null
+          id?: string
+          image_url: string
+          metadata?: Json | null
+          priority?: number | null
+          release_date?: string | null
+          source?: string | null
+          status?: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          external_id?: string | null
+          genre?: string | null
+          id?: string
+          image_url?: string
+          metadata?: Json | null
+          priority?: number | null
+          release_date?: string | null
+          source?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      update_logs: {
+        Row: {
+          created_at: string
+          error_details: string | null
+          id: string
+          records_added: number | null
+          records_removed: number | null
+          records_updated: number | null
+          source_name: string
+          status: string
+          sync_duration_ms: number | null
+        }
+        Insert: {
+          created_at?: string
+          error_details?: string | null
+          id?: string
+          records_added?: number | null
+          records_removed?: number | null
+          records_updated?: number | null
+          source_name: string
+          status?: string
+          sync_duration_ms?: number | null
+        }
+        Update: {
+          created_at?: string
+          error_details?: string | null
+          id?: string
+          records_added?: number | null
+          records_removed?: number | null
+          records_updated?: number | null
+          source_name?: string
+          status?: string
+          sync_duration_ms?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      clean_expired_content: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
