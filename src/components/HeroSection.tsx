@@ -1,28 +1,33 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Shield, Users } from "lucide-react";
+import heroImage from "@/assets/hero-image.jpg";
 import DemoModal from "@/components/DemoModal";
-import DynamicBackground from "@/components/DynamicBackground";
 
 const HeroSection = () => {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
-  
   const scrollToPricing = () => {
     const pricingSection = document.getElementById('pricing');
     pricingSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Arrière-plan dynamique */}
-      <DynamicBackground />
+    <section className="relative min-h-screen hero-gradient flex items-center overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={heroImage} 
+          alt="IPTV Streaming on multiple devices" 
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
+      </div>
 
       {/* Floating Elements */}
-      <div className="absolute top-20 right-20 animate-float opacity-30 z-10">
+      <div className="absolute top-20 right-20 animate-float opacity-30">
         <div className="w-20 h-20 rounded-full bg-primary/20 blur-xl"></div>
       </div>
-      <div className="absolute bottom-40 left-10 animate-float opacity-20 z-10" style={{ animationDelay: '2s' }}>
+      <div className="absolute bottom-40 left-10 animate-float opacity-20" style={{ animationDelay: '2s' }}>
         <div className="w-32 h-32 rounded-full bg-primary/15 blur-2xl"></div>
       </div>
 
@@ -32,7 +37,7 @@ const HeroSection = () => {
             <div className="glass p-2 rounded-lg">
               <PlayCircle className="w-6 h-6 text-primary" />
             </div>
-            <span className="text-sm font-medium text-white/80 tracking-wide uppercase">
+            <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
               Streaming Premium
             </span>
           </div>
@@ -40,10 +45,10 @@ const HeroSection = () => {
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none">
             <span className="gradient-text">IPTV</span>
             <br />
-            <span className="text-white">Express</span>
+            <span className="text-foreground">Express</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl leading-relaxed">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
             Accédez à plus de <strong className="text-primary">15,000 chaînes</strong> et 
             <strong className="text-primary"> 80,000 VOD</strong> en qualité 4K. 
             Compatible avec tous vos appareils préférés.
@@ -72,8 +77,8 @@ const HeroSection = () => {
             ].map((feature, index) => (
               <div key={index} className="glass p-6 rounded-xl group hover:bg-white/10 transition-smooth">
                 <feature.icon className="w-8 h-8 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                <h3 className="font-semibold text-lg mb-2 text-white">{feature.title}</h3>
-                <p className="text-white/80 text-sm">{feature.desc}</p>
+                <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm">{feature.desc}</p>
               </div>
             ))}
           </div>
