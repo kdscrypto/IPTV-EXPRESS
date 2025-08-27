@@ -129,25 +129,6 @@ const Index = () => {
         price={cryptoModal.price}
       />
 
-      {/* Bouton flottant pour paiement crypto (alternative) */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button
-          onClick={() => setCryptoModal({
-            isOpen: true,
-            planName: 'IPTV Premium',
-            price: 30
-          })}
-          className="glass p-4 rounded-full shadow-primary border border-primary/30 hover:border-primary/50 transition-smooth group"
-          aria-label="Paiement cryptomonnaie"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">₿</span>
-            <span className="text-sm font-medium hidden group-hover:block">
-              Payer en crypto
-            </span>
-          </div>
-        </button>
-      </div>
     </div>
   );
 };
