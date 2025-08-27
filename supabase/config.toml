@@ -1,1 +1,4 @@
 project_id = "gbssebvzecsgcfjlqtqp"
+
+[functions.sync-media-content]
+verify_jwt = false

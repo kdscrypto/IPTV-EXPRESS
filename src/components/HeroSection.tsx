@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Shield, Users } from "lucide-react";
-import heroImage from "@/assets/hero-image.jpg";
 import DemoModal from "@/components/DemoModal";
+import DynamicBackground from "@/components/DynamicBackground";
 
 const HeroSection = () => {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
@@ -13,15 +13,8 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen hero-gradient flex items-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={heroImage} 
-          alt="IPTV Streaming on multiple devices" 
-          className="w-full h-full object-cover opacity-20"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
-      </div>
+      {/* Dynamic Background */}
+      <DynamicBackground className="z-0" />
 
       {/* Floating Elements */}
       <div className="absolute top-20 right-20 animate-float opacity-30">
