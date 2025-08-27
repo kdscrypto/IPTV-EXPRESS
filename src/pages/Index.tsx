@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
-
+import ActivationForm from "@/components/ActivationForm";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -111,6 +111,12 @@ const Index = () => {
         <HeroSection />
         <FeaturesSection />
         <PricingSection onSelectPlan={handleSelectPlan} />
+        {selectedPlan && (
+          <ActivationForm 
+            selectedPlan={selectedPlan}
+            onClearPlan={() => setSelectedPlan(null)}
+          />
+        )}
         <FAQSection />
         <ContactSection />
       </main>
