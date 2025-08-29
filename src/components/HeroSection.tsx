@@ -62,19 +62,6 @@ const HeroSection = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: Shield, title: "Sécurisé", desc: "Connexion cryptée SSL" },
-              { icon: Users, title: "Multi-appareils", desc: "5 connexions simultanées" },
-              { icon: PlayCircle, title: "Qualité 4K", desc: "Streaming haute définition" }
-            ].map((feature, index) => (
-              <div key={index} className="glass p-6 rounded-xl group hover:bg-white/10 transition-smooth">
-                <feature.icon className="w-8 h-8 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
