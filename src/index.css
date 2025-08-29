@@ -20,11 +20,11 @@
     --popover: 240 10% 6%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary brand colors - IPTV blue/purple */
-    --primary: 262 83% 58%;
+    /* Primary brand colors - IPTV blue/purple - Accessibility compliant contrast */
+    --primary: 262 83% 70%;
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 262 83% 65%;
-    --primary-glow: 262 83% 58%;
+    --primary-hover: 262 83% 75%;
+    --primary-glow: 262 83% 70%;
 
     /* Secondary colors */
     --secondary: 240 10% 8%;
