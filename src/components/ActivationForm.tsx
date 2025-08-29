@@ -9,6 +9,7 @@ import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp }
 import { useToast } from "@/hooks/use-toast";
 import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
 import { sanitizeEmail, sanitizeDeviceInfo, isValidEmail, isValidDevice, checkRateLimit } from "@/utils/validation";
+import { handleFormError, validateFormData, logSecureError } from "@/utils/errorHandler";
 
 interface ActivationFormData {
   email: string;
@@ -50,64 +51,50 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Rate limiting check
-    if (!checkRateLimit(formData.email, 3, 300000)) { // 3 requests per 5 minutes
-      toast({
-        title: "Trop de tentatives",
-        description: "Veuillez patienter 5 minutes avant de renvoyer le formulaire.",
-        variant: "destructive"
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Input sanitization and validation
-    const sanitizedEmail = sanitizeEmail(formData.email);
-    const sanitizedConfirmEmail = sanitizeEmail(formData.confirmEmail);
-    const sanitizedDeviceInfo = sanitizeDeviceInfo(formData.deviceInfo || '');
-
-    // Validation
-    if (!isValidEmail(sanitizedEmail)) {
-      toast({
-        title: "Email invalide",
-        description: "Veuillez saisir une adresse email valide.",
-        variant: "destructive"
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (sanitizedEmail !== sanitizedConfirmEmail) {
-      toast({
-        title: "Erreur de validation",
-        description: "Les adresses email ne correspondent pas.",
-        variant: "destructive"
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!isValidDevice(formData.device)) {
-      toast({
-        title: "Appareil invalide",
-        description: "Veuillez sélectionner un type d'appareil valide.",
-        variant: "destructive"
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!selectedPlan) {
-      toast({
-        title: "Plan non sélectionné",
-        description: "Veuillez d'abord choisir un plan d'abonnement.",
-        variant: "destructive"
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
+      // Rate limiting check
+      if (!checkRateLimit(formData.email, 3, 300000)) { // 3 requests per 5 minutes
+        toast({
+          title: "Trop de tentatives",
+          description: "Veuillez patienter 5 minutes avant de renvoyer le formulaire.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Comprehensive form validation
+      const validation = validateFormData({
+        email: formData.email,
+        confirmEmail: formData.confirmEmail,
+        device: formData.device,
+        deviceInfo: formData.deviceInfo
+      });
+
+      if (!validation.isValid) {
+        toast({
+          title: "Erreur de validation",
+          description: validation.errors[0],
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!selectedPlan) {
+        toast({
+          title: "Plan non sélectionné",
+          description: "Veuillez d'abord choisir un plan d'abonnement.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Input sanitization
+      const sanitizedEmail = sanitizeEmail(formData.email);
+      const sanitizedDeviceInfo = sanitizeDeviceInfo(formData.deviceInfo || '');
+
       // Préparer les données pour WhatsApp avec les données sanitized
       const whatsappData = {
         email: sanitizedEmail,
@@ -119,6 +106,13 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
 
       // Envoyer vers WhatsApp
       const message = sendToWhatsApp(whatsappData);
+
+      // Log successful submission securely
+      logSecureError({
+        type: 'form_submission_success',
+        email: sanitizedEmail.replace(/(.{2}).*(@.*)/, '$1***$2'), // Partially redact email for logs
+        plan: selectedPlan.name
+      }, 'WhatsApp Form Submission');
 
       toast({
         title: "Redirection vers WhatsApp",
@@ -137,14 +131,12 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
       }, 2000);
 
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ouvrir WhatsApp. Veuillez réessayer.",
-        variant: "destructive"
-      });
+      // Use secure error handling
+      handleFormError(error, toast);
+      logSecureError(error, 'WhatsApp Form Submission Error');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   const handleInputChange = (field: keyof ActivationFormData, value: string) => {
