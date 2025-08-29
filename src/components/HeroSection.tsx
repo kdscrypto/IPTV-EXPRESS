@@ -35,16 +35,14 @@ const HeroSection = () => {
             </span>
           </div>
 
-          {/* Logo principal */}
-          <div className="flex items-center justify-center mb-8">
-            <img 
-              src="/lovable-uploads/aba13bc0-ea36-4a76-998a-db598bc5a404.png" 
-              alt="IPTV Express Logo" 
-              className="h-32 md:h-40 lg:h-48 w-auto object-contain"
-            />
-          </div>
+          {/* Titre principal */}
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none">
+            <span className="gradient-text">IPTV</span>
+            <br />
+            <span className="text-foreground">Express</span>
+          </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl leading-relaxed mx-auto text-center">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
             Accédez à plus de <strong className="text-primary">15,000 chaînes</strong> et 
             <strong className="text-primary"> 80,000 VOD</strong> en qualité 4K. 
             Compatible avec tous vos appareils préférés.
