@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
-import { sanitizeEmail, sanitizeDeviceInfo, isValidEmail, isValidDevice, checkRateLimit } from "@/utils/validation";
-import { handleFormError, validateFormData, logSecureError } from "@/utils/errorHandler";
 
 interface ActivationFormData {
   email: string;
@@ -51,68 +49,39 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      // Rate limiting check
-      if (!checkRateLimit(formData.email, 3, 300000)) { // 3 requests per 5 minutes
-        toast({
-          title: "Trop de tentatives",
-          description: "Veuillez patienter 5 minutes avant de renvoyer le formulaire.",
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Comprehensive form validation
-      const validation = validateFormData({
-        email: formData.email,
-        confirmEmail: formData.confirmEmail,
-        device: formData.device,
-        deviceInfo: formData.deviceInfo
+    // Validation
+    if (formData.email !== formData.confirmEmail) {
+      toast({
+        title: "Erreur de validation",
+        description: "Les adresses email ne correspondent pas.",
+        variant: "destructive"
       });
+      setIsSubmitting(false);
+      return;
+    }
 
-      if (!validation.isValid) {
-        toast({
-          title: "Erreur de validation",
-          description: validation.errors[0],
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
+    if (!selectedPlan) {
+      toast({
+        title: "Plan non sélectionné",
+        description: "Veuillez d'abord choisir un plan d'abonnement.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
-      if (!selectedPlan) {
-        toast({
-          title: "Plan non sélectionné",
-          description: "Veuillez d'abord choisir un plan d'abonnement.",
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Input sanitization
-      const sanitizedEmail = sanitizeEmail(formData.email);
-      const sanitizedDeviceInfo = sanitizeDeviceInfo(formData.deviceInfo || '');
-
-      // Préparer les données pour WhatsApp avec les données sanitized
+    try {
+      // Préparer les données pour WhatsApp
       const whatsappData = {
-        email: sanitizedEmail,
+        email: formData.email,
         device: getDeviceLabel(formData.device),
-        deviceInfo: sanitizedDeviceInfo,
+        deviceInfo: formData.deviceInfo || '',
         planName: selectedPlan.name,
         planPrice: selectedPlan.price
       };
 
       // Envoyer vers WhatsApp
       const message = sendToWhatsApp(whatsappData);
-
-      // Log successful submission securely
-      logSecureError({
-        type: 'form_submission_success',
-        email: sanitizedEmail.replace(/(.{2}).*(@.*)/, '$1***$2'), // Partially redact email for logs
-        plan: selectedPlan.name
-      }, 'WhatsApp Form Submission');
 
       toast({
         title: "Redirection vers WhatsApp",
@@ -131,12 +100,14 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
       }, 2000);
 
     } catch (error) {
-      // Use secure error handling
-      handleFormError(error, toast);
-      logSecureError(error, 'WhatsApp Form Submission Error');
-    } finally {
-      setIsSubmitting(false);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ouvrir WhatsApp. Veuillez réessayer.",
+        variant: "destructive"
+      });
     }
+
+    setIsSubmitting(false);
   };
 
   const handleInputChange = (field: keyof ActivationFormData, value: string) => {

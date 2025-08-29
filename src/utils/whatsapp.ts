@@ -1,5 +1,3 @@
-import { getWhatsAppConfig } from "@/config/crypto";
-
 export const sendToWhatsApp = (data: {
   email: string;
   device: string;
@@ -7,9 +5,8 @@ export const sendToWhatsApp = (data: {
   planName: string;
   planPrice: number;
 }) => {
-  // Get phone number from secure configuration
-  const whatsappConfig = getWhatsAppConfig();
-  const phoneNumber = whatsappConfig.phoneNumber;
+  // Numéro de téléphone au format international (sans le +)
+  const phoneNumber = "237694564763";
   
   // Message simplifié pour éviter les problèmes d'encodage
   const message = `NOUVELLE DEMANDE IPTV EXPRESS
