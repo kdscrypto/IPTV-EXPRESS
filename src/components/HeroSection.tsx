@@ -47,7 +47,10 @@ const HeroSection = () => {
             Compatible avec tous vos appareils préférés.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 mb-12 sm:justify-end">
+            <Button variant="glass" size="xl" onClick={() => setIsDemoOpen(true)}>
+              Voir la démo
+            </Button>
             <Button 
               variant="hero" 
               size="xl" 
@@ -56,9 +59,6 @@ const HeroSection = () => {
             >
               Commencer maintenant
               <PlayCircle className="w-5 h-5 transition-transform group-hover:scale-110" />
-            </Button>
-            <Button variant="glass" size="xl" onClick={() => setIsDemoOpen(true)}>
-              Voir la démo
             </Button>
           </div>
 
