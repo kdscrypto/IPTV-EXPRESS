@@ -47,7 +47,7 @@ const HeroSection = () => {
             Compatible avec tous vos appareils préférés.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-12 sm:justify-end">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8 sm:mb-12 sm:justify-end mt-4">
             <Button variant="glass" size="lg" onClick={() => setIsDemoOpen(true)}>
               Voir la démo
             </Button>
