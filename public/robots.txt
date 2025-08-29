@@ -12,3 +12,14 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap pour Netlify
+Sitemap: https://votre-domaine.netlify.app/sitemap.xml
+
+# Optimisation SEO
+Crawl-delay: 1
+
+# Bloquer l'accès aux dossiers sensibles
+Disallow: /admin/
+Disallow: /.netlify/
+Disallow: /functions/

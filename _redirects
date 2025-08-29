@@ -1,0 +1,8 @@
+# Redirections Netlify pour SPA
+# Toutes les routes vers index.html pour React Router
+/*    /index.html   200
+
+# Sécurité - bloquer l'accès aux fichiers sensibles
+/.env*                          /404  404
+/config/*                       /404  404
+/src/*                          /404  404

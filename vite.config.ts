@@ -21,15 +21,32 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     cssCodeSplit: false,
+    sourcemap: false, // Désactiver sourcemaps en production pour Netlify
     rollupOptions: {
       output: {
-        manualChunks: undefined,
+        manualChunks: {
+          // Optimisation pour Netlify - séparation des chunks
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast'],
+          supabase: ['@supabase/supabase-js'],
+        },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {
             return 'assets/style.[hash].css';
           }
           return 'assets/[name].[hash].[ext]';
         },
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
+      },
+    },
+    // Optimisation pour Netlify
+    target: 'es2015',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Supprimer console.log en production
+        drop_debugger: true,
       },
     },
   },
