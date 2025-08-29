@@ -48,17 +48,17 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-12 sm:justify-end">
-            <Button variant="glass" size="xl" onClick={() => setIsDemoOpen(true)}>
+            <Button variant="glass" size="lg" onClick={() => setIsDemoOpen(true)}>
               Voir la démo
             </Button>
             <Button 
               variant="hero" 
-              size="xl" 
+              size="lg" 
               onClick={scrollToPricing}
               className="group"
             >
               Commencer maintenant
-              <PlayCircle className="w-5 h-5 transition-transform group-hover:scale-110" />
+              <PlayCircle className="w-4 h-4 transition-transform group-hover:scale-110" />
             </Button>
           </div>
 
