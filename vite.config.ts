@@ -40,15 +40,9 @@ export default defineConfig(({ mode }) => ({
         entryFileNames: 'assets/[name].[hash].js',
       },
     },
-    // Optimisation pour Netlify
+    // Optimisation pour Netlify - Configuration simplifiée
     target: 'es2015',
     minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true, // Supprimer console.log en production
-        drop_debugger: true,
-      },
-    },
   },
   css: {
     devSourcemap: true,
