@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
+import { sanitizeEmail, sanitizeDeviceInfo, isValidEmail, isValidDevice, checkRateLimit } from "@/utils/validation";
 
 interface ActivationFormData {
   email: string;
@@ -49,11 +50,47 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Rate limiting check
+    if (!checkRateLimit(formData.email, 3, 300000)) { // 3 requests per 5 minutes
+      toast({
+        title: "Trop de tentatives",
+        description: "Veuillez patienter 5 minutes avant de renvoyer le formulaire.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Input sanitization and validation
+    const sanitizedEmail = sanitizeEmail(formData.email);
+    const sanitizedConfirmEmail = sanitizeEmail(formData.confirmEmail);
+    const sanitizedDeviceInfo = sanitizeDeviceInfo(formData.deviceInfo || '');
+
     // Validation
-    if (formData.email !== formData.confirmEmail) {
+    if (!isValidEmail(sanitizedEmail)) {
+      toast({
+        title: "Email invalide",
+        description: "Veuillez saisir une adresse email valide.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (sanitizedEmail !== sanitizedConfirmEmail) {
       toast({
         title: "Erreur de validation",
         description: "Les adresses email ne correspondent pas.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!isValidDevice(formData.device)) {
+      toast({
+        title: "Appareil invalide",
+        description: "Veuillez sélectionner un type d'appareil valide.",
         variant: "destructive"
       });
       setIsSubmitting(false);
@@ -71,11 +108,11 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
     }
 
     try {
-      // Préparer les données pour WhatsApp
+      // Préparer les données pour WhatsApp avec les données sanitized
       const whatsappData = {
-        email: formData.email,
+        email: sanitizedEmail,
         device: getDeviceLabel(formData.device),
-        deviceInfo: formData.deviceInfo || '',
+        deviceInfo: sanitizedDeviceInfo,
         planName: selectedPlan.name,
         planPrice: selectedPlan.price
       };

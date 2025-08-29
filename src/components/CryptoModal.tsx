@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Copy, Check, Bitcoin, Coins, DollarSign, QrCode, Clock, Shield, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getCryptoAddresses } from "@/config/crypto";
 
 interface CryptoModalProps {
   isOpen: boolean;
@@ -23,25 +24,26 @@ const CryptoModal = ({ isOpen, onClose, planName, price }: CryptoModalProps) => 
   const { toast } = useToast();
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
-  // Ces adresses seraient configurables via des variables d'environnement
+  // Get crypto addresses from secure configuration
+  const cryptoConfig = getCryptoAddresses();
   const cryptoAddresses = {
     BTC: {
-      address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-      network: "Bitcoin (BTC)",
+      address: cryptoConfig.bitcoin.address,
+      network: cryptoConfig.bitcoin.network,
       icon: Bitcoin,
-      color: "text-orange-500"
+      color: cryptoConfig.bitcoin.color
     },
     ETH: {
-      address: "0x742d35Cc6634C0532925a3b8D4c2D5E2E8b74E3F",
-      network: "Ethereum (ETH)",
+      address: cryptoConfig.ethereum.address,
+      network: cryptoConfig.ethereum.network,
       icon: Coins,
-      color: "text-blue-500"
+      color: cryptoConfig.ethereum.color
     },
     USDT: {
-      address: "0x742d35Cc6634C0532925a3b8D4c2D5E2E8b74E3F",
-      network: "USDT (ERC-20)",
+      address: cryptoConfig.usdt.address,
+      network: cryptoConfig.usdt.network,
       icon: DollarSign,
-      color: "text-green-500"
+      color: cryptoConfig.usdt.color
     }
   };
 
