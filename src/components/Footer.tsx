@@ -35,8 +35,12 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gradient-primary rounded-lg">
-                <Tv className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-primary p-1">
+                <img 
+                  src="/lovable-uploads/aba13bc0-ea36-4a76-998a-db598bc5a404.png" 
+                  alt="IPTV Express Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <h3 className="text-2xl font-black text-primary">IPTV</h3>

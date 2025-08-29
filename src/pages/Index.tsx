@@ -68,7 +68,7 @@ const Index = () => {
             "name": "IPTV Express",
             "description": "Service IPTV express avec plus de 15000 chaînes TV et 80000 contenus VOD en qualité 4K",
             "url": "https://iptv-express.fr",
-            "logo": "https://iptv-express.fr/logo.png",
+            "logo": "/lovable-uploads/aba13bc0-ea36-4a76-998a-db598bc5a404.png",
             "sameAs": [
               "https://www.facebook.com/iptvexpress",
               "https://twitter.com/iptvexpress"
