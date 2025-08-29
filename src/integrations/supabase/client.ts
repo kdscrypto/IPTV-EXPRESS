@@ -15,3 +15,19 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
   }
 });
+
+// Prevent automatic realtime connections by overriding the connect method
+if (typeof window !== 'undefined') {
+  // Override WebSocket to prevent automatic realtime connections for this domain
+  const originalWebSocket = window.WebSocket;
+  window.WebSocket = class extends originalWebSocket {
+    constructor(url: string | URL, protocols?: string | string[]) {
+      const urlString = url.toString();
+      if (urlString.includes('gbssebvzecsgcfjlqtqp.supabase.co/realtime')) {
+        // Prevent connection by throwing a controlled error
+        throw new Error('Realtime connections disabled to prevent console errors');
+      }
+      super(url, protocols);
+    }
+  };
+}
