@@ -65,6 +65,7 @@ serve(async (req) => {
     const genreMap = new Map(genresData.genres?.map((g: any) => [g.id, g.name]) || []);
 
     // Process trending movies
+    console.log(`Processing ${trendingData.results?.length || 0} trending movies`);
     for (const movie of trendingData.results?.slice(0, 10) || []) {
       const genres = movie.genre_ids?.map(id => genreMap.get(id)).filter(Boolean).join(', ') || '';
       const imageUrl = movie.poster_path 
@@ -85,16 +86,21 @@ serve(async (req) => {
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24h expiry
       };
 
-      const { error } = await supabase
+      console.log(`Attempting to upsert: ${mediaContent.title} (${mediaContent.external_id})`);
+      
+      const { data, error } = await supabase
         .from('media_content')
         .upsert(mediaContent, { 
           onConflict: 'external_id,source',
           ignoreDuplicates: false 
-        });
+        })
+        .select();
 
       if (error) {
         console.error('Error upserting trending movie:', error);
+        console.error('Media content that failed:', mediaContent);
       } else {
+        console.log(`Successfully upserted: ${mediaContent.title}`, data);
         recordsAdded++;
       }
     }
@@ -164,17 +170,23 @@ serve(async (req) => {
       }
     ];
 
+    console.log(`Processing ${sportsContent.length} sports content items`);
     for (const content of sportsContent) {
-      const { error } = await supabase
+      console.log(`Attempting to upsert sport: ${content.title} (${content.external_id})`);
+      
+      const { data, error } = await supabase
         .from('media_content')
         .upsert(content, { 
           onConflict: 'external_id,source',
           ignoreDuplicates: false 
-        });
+        })
+        .select();
 
       if (error) {
         console.error('Error upserting sports content:', error);
+        console.error('Sports content that failed:', content);
       } else {
+        console.log(`Successfully upserted sport: ${content.title}`, data);
         recordsAdded++;
       }
     }
