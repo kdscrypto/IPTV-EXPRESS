@@ -98,6 +98,69 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          device: string | null
+          device_info: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          pay_address: string | null
+          pay_amount: number | null
+          pay_currency: string | null
+          payment_id: string | null
+          payment_status: string
+          payment_url: string | null
+          plan_id: string
+          plan_name: string
+          price_amount: number
+          price_currency: string
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          device?: string | null
+          device_info?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          pay_address?: string | null
+          pay_amount?: number | null
+          pay_currency?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          payment_url?: string | null
+          plan_id: string
+          plan_name: string
+          price_amount: number
+          price_currency?: string
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          device?: string | null
+          device_info?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          pay_address?: string | null
+          pay_amount?: number | null
+          pay_currency?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          payment_url?: string | null
+          plan_id?: string
+          plan_name?: string
+          price_amount?: number
+          price_currency?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       update_logs: {
         Row: {
           created_at: string
@@ -139,10 +202,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      clean_expired_content: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      clean_expired_content: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
