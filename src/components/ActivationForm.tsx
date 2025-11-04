@@ -5,9 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp } from "lucide-react";
+import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp, Wallet, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ActivationFormData {
   email: string;
@@ -25,9 +26,10 @@ interface SelectedPlan {
 interface ActivationFormProps {
   selectedPlan?: SelectedPlan | null;
   onClearPlan?: () => void;
+  onPaymentCreated?: (payment: any) => void;
 }
 
-const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
+const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: ActivationFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ActivationFormData>({
     email: '',
@@ -36,6 +38,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
     deviceInfo: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'crypto' | 'whatsapp'>('crypto');
 
   const deviceOptions = [
     { value: 'smart-tv', label: 'Smart TV (Samsung, LG, Sony...)', icon: Tv },
@@ -71,38 +74,73 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
     }
 
     try {
-      // Préparer les données pour WhatsApp
-      const whatsappData = {
-        email: formData.email,
-        device: getDeviceLabel(formData.device),
-        deviceInfo: formData.deviceInfo || '',
-        planName: selectedPlan.name,
-        planPrice: selectedPlan.price
-      };
-
-      // Envoyer vers WhatsApp
-      const message = sendToWhatsApp(whatsappData);
-
-      toast({
-        title: "Redirection vers WhatsApp",
-        description: "Votre demande est automatiquement transférée à notre support.",
-      });
-
-      // Réinitialiser le formulaire après envoi
-      setTimeout(() => {
-        setFormData({
-          email: '',
-          confirmEmail: '',
-          device: '',
-          deviceInfo: ''
+      if (paymentMethod === 'crypto') {
+        // Create payment via NOWPayments
+        const { data, error } = await supabase.functions.invoke('create-payment', {
+          body: {
+            planId: selectedPlan.id,
+            planName: selectedPlan.name,
+            price: selectedPlan.price,
+            email: formData.email,
+            device: formData.device,
+            deviceInfo: formData.deviceInfo,
+          }
         });
-        onClearPlan?.();
-      }, 2000);
 
+        if (error) throw error;
+
+        if (data?.success) {
+          toast({
+            title: "Paiement créé !",
+            description: "Votre paiement crypto a été initialisé avec succès.",
+          });
+
+          // Call parent callback with payment data
+          onPaymentCreated?.(data.payment);
+
+          // Reset form
+          setTimeout(() => {
+            setFormData({
+              email: '',
+              confirmEmail: '',
+              device: '',
+              deviceInfo: ''
+            });
+          }, 1000);
+        }
+      } else {
+        // Send to WhatsApp (old method)
+        const whatsappData = {
+          email: formData.email,
+          device: getDeviceLabel(formData.device),
+          deviceInfo: formData.deviceInfo || '',
+          planName: selectedPlan.name,
+          planPrice: selectedPlan.price
+        };
+
+        sendToWhatsApp(whatsappData);
+
+        toast({
+          title: "Redirection vers WhatsApp",
+          description: "Votre demande est automatiquement transférée à notre support.",
+        });
+
+        // Reset form
+        setTimeout(() => {
+          setFormData({
+            email: '',
+            confirmEmail: '',
+            device: '',
+            deviceInfo: ''
+          });
+          onClearPlan?.();
+        }, 2000);
+      }
     } catch (error) {
+      console.error('Error:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'ouvrir WhatsApp. Veuillez réessayer.",
+        description: error instanceof Error ? error.message : "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive"
       });
     }
@@ -150,7 +188,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
                         Plan sélectionné
                       </Badge>
                       <span className="font-semibold text-lg">
-                        {selectedPlan.name} - {selectedPlan.price}€
+                        {selectedPlan.name} - ${selectedPlan.price}
                       </span>
                     </div>
                     <Button
@@ -191,6 +229,53 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Payment Method Selection */}
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">
+                    Méthode de paiement
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('crypto')}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        paymentMethod === 'crypto'
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <Wallet className={`w-8 h-8 ${paymentMethod === 'crypto' ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className="font-semibold">Paiement Crypto</span>
+                        <span className="text-xs text-muted-foreground text-center">
+                          BTC, ETH, USDT et 300+ cryptos
+                        </span>
+                        <Badge variant="secondary" className="bg-green-500/20 text-green-700 dark:text-green-300">
+                          Recommandé
+                        </Badge>
+                      </div>
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('whatsapp')}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        paymentMethod === 'whatsapp'
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <MessageSquare className={`w-8 h-8 ${paymentMethod === 'whatsapp' ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className="font-semibold">WhatsApp Support</span>
+                        <span className="text-xs text-muted-foreground text-center">
+                          Contact direct avec le support
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Email */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-base font-semibold flex items-center gap-2">
@@ -290,8 +375,17 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
                     </>
                   ) : (
                     <>
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Envoyer vers WhatsApp Support
+                      {paymentMethod === 'crypto' ? (
+                        <>
+                          <Wallet className="w-5 h-5 mr-2" />
+                          Procéder au paiement crypto
+                        </>
+                      ) : (
+                        <>
+                          <MessageSquare className="w-5 h-5 mr-2" />
+                          Envoyer vers WhatsApp Support
+                        </>
+                      )}
                     </>
                   )}
                 </Button>
@@ -303,8 +397,8 @@ const ActivationForm = ({ selectedPlan, onClearPlan }: ActivationFormProps) => {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { step: "1", title: "Sélection", desc: "Choisissez votre plan IPTV" },
-              { step: "2", title: "Formulaire", desc: "Remplissez vos informations" },
-              { step: "3", title: "WhatsApp", desc: "Envoi automatique vers le support" }
+              { step: "2", title: "Paiement", desc: "Crypto ou WhatsApp" },
+              { step: "3", title: "Activation", desc: "Recevez vos identifiants" }
             ].map((item, index) => (
               <div key={index} className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-primary text-white rounded-full text-xl font-bold mb-3">

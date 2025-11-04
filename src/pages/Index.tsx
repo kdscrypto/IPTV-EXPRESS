@@ -9,6 +9,7 @@ import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import CryptoModal from "@/components/CryptoModal";
+import NOWPaymentModal from "@/components/NOWPaymentModal";
 
 const Index = () => {
   const { toast } = useToast();
@@ -22,10 +23,18 @@ const Index = () => {
     name: string;
     price: number;
   } | null>(null);
+  const [nowPayment, setNowPayment] = useState<{
+    isOpen: boolean;
+    payment: any;
+  }>({
+    isOpen: false,
+    payment: null,
+  });
 
   // Configuration des plans (pourrait venir d'une API ou config)
   const getPlanName = (planId: string) => {
     const plans = {
+      '1month': 'Starter (1 mois)',
       '3months': 'Découverte (3 mois)',
       '6months': 'Populaire (6 mois)', 
       '12months': 'Premium (12 mois)'
@@ -56,6 +65,13 @@ const Index = () => {
     });
   };
 
+  const handlePaymentCreated = (payment: any) => {
+    setNowPayment({
+      isOpen: true,
+      payment,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background font-inter">
       {/* JSON-LD Structured Data pour le SEO */}
@@ -83,23 +99,30 @@ const Index = () => {
             "offers": [
               {
                 "@type": "Offer",
+                "name": "Abonnement IPTV 1 mois",
+                "price": "15",
+                "priceCurrency": "USD",
+                "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD"
+              },
+              {
+                "@type": "Offer",
                 "name": "Abonnement IPTV 3 mois",
                 "price": "25",
-                "priceCurrency": "EUR",
+                "priceCurrency": "USD",
                 "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD"
               },
               {
                 "@type": "Offer", 
                 "name": "Abonnement IPTV 6 mois",
-                "price": "30",
-                "priceCurrency": "EUR",
+                "price": "45",
+                "priceCurrency": "USD",
                 "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD en 4K"
               },
               {
                 "@type": "Offer",
                 "name": "Abonnement IPTV 12 mois Premium",
-                "price": "45", 
-                "priceCurrency": "EUR",
+                "price": "60", 
+                "priceCurrency": "USD",
                 "description": "Accès Premium avec support VIP et toutes les fonctionnalités"
               }
             ]
@@ -117,6 +140,7 @@ const Index = () => {
           <ActivationForm 
             selectedPlan={selectedPlan}
             onClearPlan={() => setSelectedPlan(null)}
+            onPaymentCreated={handlePaymentCreated}
           />
         )}
         <FAQSection />
@@ -125,12 +149,19 @@ const Index = () => {
 
       <Footer />
 
-      {/* Modal de paiement crypto */}
+      {/* Modal de paiement crypto legacy */}
       <CryptoModal
         isOpen={cryptoModal.isOpen}
         onClose={() => setCryptoModal({ ...cryptoModal, isOpen: false })}
         planName={cryptoModal.planName}
         price={cryptoModal.price}
+      />
+
+      {/* Modal de paiement NOWPayments */}
+      <NOWPaymentModal
+        isOpen={nowPayment.isOpen}
+        onClose={() => setNowPayment({ isOpen: false, payment: null })}
+        payment={nowPayment.payment}
       />
 
     </div>
