@@ -20,11 +20,27 @@ interface PricingSectionProps {
 const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
   const plans: PricingPlan[] = [
     {
+      id: "1month",
+      name: "Starter",
+      duration: "1 mois",
+      price: 15,
+      originalPrice: 30,
+      features: [
+        "15,000+ chaînes live",
+        "80,000+ films & séries",
+        "Qualité Full HD",
+        "2 connexions simultanées",
+        "Support par email",
+        "Compatible tous appareils"
+      ],
+      icon: Zap
+    },
+    {
       id: "3months",
       name: "Découverte",
       duration: "3 mois",
       price: 25,
-      originalPrice: 45,
+      originalPrice: 50,
       features: [
         "15,000+ chaînes live",
         "80,000+ films & séries",
@@ -39,7 +55,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
       id: "6months",
       name: "Populaire",
       duration: "6 mois",
-      price: 30,
+      price: 45,
       originalPrice: 90,
       popular: true,
       features: [
@@ -58,8 +74,8 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
       id: "12months",
       name: "Premium",
       duration: "12 mois",
-      price: 45,
-      originalPrice: 180,
+      price: 60,
+      originalPrice: 120,
       premium: true,
       features: [
         "15,000+ chaînes live",
@@ -147,17 +163,17 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                   <div className="flex items-center justify-center gap-3 mb-2">
                     {plan.originalPrice && (
                       <span className="text-2xl text-muted-foreground line-through">
-                        {plan.originalPrice}€
+                        ${plan.originalPrice}
                       </span>
                     )}
                     <span className="text-5xl font-black text-primary">
-                      {plan.price}€
+                      ${plan.price}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {plan.originalPrice && (
                       <span className="text-success font-semibold">
-                        Économisez {plan.originalPrice - plan.price}€
+                        Économisez ${plan.originalPrice - plan.price}
                       </span>
                     )}
                   </p>
