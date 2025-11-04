@@ -1,9 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, CheckCircle, Clock, AlertCircle, Loader2 } from "lucide-react";
+import { Copy, CheckCircle, Clock, AlertCircle, Loader2, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface NOWPaymentModalProps {
   isOpen: boolean;
@@ -76,6 +77,7 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
           title: "En attente du paiement",
           description: "Envoyez le montant exact à l'adresse ci-dessous",
           color: "text-yellow-500",
+          badge: <Badge variant="outline" className="border-yellow-500 text-yellow-500">En attente</Badge>
         };
       case 'confirming':
         return {
@@ -83,6 +85,7 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
           title: "Confirmation en cours",
           description: "Votre paiement est en cours de confirmation sur la blockchain",
           color: "text-blue-500",
+          badge: <Badge variant="outline" className="border-blue-500 text-blue-500">Confirmation</Badge>
         };
       case 'finished':
         return {
@@ -90,6 +93,7 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
           title: "Paiement confirmé !",
           description: "Votre abonnement sera activé sous peu. Vous recevrez un email de confirmation.",
           color: "text-green-500",
+          badge: <Badge className="bg-green-500 text-white">Confirmé</Badge>
         };
       case 'failed':
       case 'expired':
@@ -98,6 +102,7 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
           title: "Paiement échoué",
           description: "Le paiement a échoué ou expiré. Veuillez réessayer.",
           color: "text-red-500",
+          badge: <Badge variant="destructive">Échoué</Badge>
         };
       default:
         return {
@@ -105,6 +110,7 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
           title: "Initialisation...",
           description: "Préparation du paiement",
           color: "text-gray-500",
+          badge: <Badge variant="outline">Initialisation</Badge>
         };
     }
   };
@@ -129,6 +135,7 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
         {/* Status */}
         <div className="flex flex-col items-center gap-4 py-6">
           {statusConfig.icon}
+          {statusConfig.badge}
           <div className="text-center">
             <h3 className={`text-xl font-bold ${statusConfig.color}`}>
               {statusConfig.title}
@@ -213,9 +220,11 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
             {payment.payment_url && (
               <Button
                 className="w-full"
+                variant="outline"
                 onClick={() => window.open(payment.payment_url, '_blank')}
               >
-                Ouvrir la page de paiement
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Ouvrir la page de paiement NOWPayments
               </Button>
             )}
           </div>
@@ -224,6 +233,13 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
         {/* Success Actions */}
         {status === 'finished' && (
           <div className="space-y-4">
+            <div className="glass p-4 rounded-lg border border-green-500/20 bg-green-500/10">
+              <h4 className="font-semibold text-green-500 mb-2">🎉 Félicitations !</h4>
+              <p className="text-sm text-muted-foreground">
+                Votre abonnement IPTV sera activé dans les 5 prochaines minutes. 
+                Un email de confirmation avec vos identifiants vous sera envoyé à <strong>{order?.email}</strong>.
+              </p>
+            </div>
             <Button className="w-full" onClick={onClose}>
               Fermer
             </Button>
@@ -233,8 +249,13 @@ const NOWPaymentModal = ({ isOpen, onClose, payment }: NOWPaymentModalProps) => 
         {/* Failed Actions */}
         {(status === 'failed' || status === 'expired') && (
           <div className="space-y-4">
-            <Button className="w-full" onClick={onClose}>
-              Fermer
+            <div className="glass p-4 rounded-lg border border-red-500/20 bg-red-500/10">
+              <p className="text-sm text-muted-foreground">
+                Besoin d'aide ? Contactez notre support via WhatsApp pour une assistance immédiate.
+              </p>
+            </div>
+            <Button className="w-full" variant="outline" onClick={onClose}>
+              Fermer et réessayer
             </Button>
           </div>
         )}

@@ -9,6 +9,7 @@ import { Mail, Smartphone, Tv, MonitorSpeaker, Shield, CheckCircle, X, ArrowUp, 
 import { useToast } from "@/hooks/use-toast";
 import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
+import PaymentMethodComparison from "@/components/PaymentMethodComparison";
 
 interface ActivationFormData {
   email: string;
@@ -392,6 +393,9 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
               </form>
             </CardContent>
           </Card>
+
+          {/* Payment Method Comparison */}
+          <PaymentMethodComparison />
 
           {/* Process Steps */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
