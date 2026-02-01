@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Zap, ArrowRight } from "lucide-react";
 
 const FinalCTA = () => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const navigate = useNavigate();
+
+  const goToPricing = () => {
+    navigate("/#pricing");
+    setTimeout(() => {
+      const pricingSection = document.getElementById("pricing");
+      pricingSection?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   return (
@@ -29,7 +36,7 @@ const FinalCTA = () => {
           </p>
 
           <Button
-            onClick={scrollToTop}
+            onClick={goToPricing}
             size="xl"
             className="w-full sm:w-auto text-lg font-bold px-12 py-7 rounded-xl group"
             style={{ animation: "pulse-cta 2s ease-in-out infinite" }}

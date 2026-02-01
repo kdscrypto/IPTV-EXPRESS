@@ -1,10 +1,17 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Play, Tv, Zap } from "lucide-react";
 
 const PrelandingHero = () => {
-  const scrollToCTA = () => {
-    const element = document.getElementById("cta");
-    element?.scrollIntoView({ behavior: "smooth" });
+  const navigate = useNavigate();
+
+  const goToPricing = () => {
+    navigate("/#pricing");
+    // After navigation, scroll to pricing section
+    setTimeout(() => {
+      const pricingSection = document.getElementById("pricing");
+      pricingSection?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   return (
@@ -50,7 +57,7 @@ const PrelandingHero = () => {
           {/* CTA Button */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
-              onClick={scrollToCTA}
+              onClick={goToPricing}
               size="xl"
               className="w-full sm:w-auto text-lg font-bold px-10 py-6 rounded-xl"
               style={{ animation: "pulse-cta 2s ease-in-out infinite" }}
