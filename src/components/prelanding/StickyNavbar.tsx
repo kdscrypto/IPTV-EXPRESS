@@ -1,14 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 const StickyNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
     setIsMenuOpen(false);
+  };
+
+  const goToPricing = () => {
+    setIsMenuOpen(false);
+    navigate("/#pricing");
+    setTimeout(() => {
+      const pricingSection = document.getElementById("pricing");
+      pricingSection?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   return (
@@ -44,7 +55,7 @@ const StickyNavbar = () => {
               FAQ
             </button>
             <Button
-              onClick={() => scrollToSection("cta")}
+              onClick={goToPricing}
               className="font-semibold"
             >
               Get Started
@@ -84,7 +95,7 @@ const StickyNavbar = () => {
                 FAQ
               </button>
               <Button
-                onClick={() => scrollToSection("cta")}
+                onClick={goToPricing}
                 className="w-full font-semibold"
               >
                 Get Started
