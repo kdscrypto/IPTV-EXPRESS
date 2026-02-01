@@ -21,11 +21,15 @@
     --popover: 240 10% 6%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary brand colors - IPTV blue/purple - Accessibility compliant contrast */
-    --primary: 262 83% 70%;
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 262 83% 75%;
-    --primary-glow: 262 83% 70%;
+    /* Primary brand colors - Electric Green - High contrast for dark mode */
+    --primary: 152 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --primary-hover: 152 100% 55%;
+    --primary-glow: 152 100% 50%;
+    
+    /* Electric green specific */
+    --electric-green: 152 100% 50%;
+    --electric-green-dark: 152 80% 35%;
 
     /* Secondary colors */
     --secondary: 240 10% 8%;
@@ -54,22 +58,23 @@
     /* UI colors */
     --border: 240 10% 12%;
     --input: 240 10% 12%;
-    --ring: 262 83% 58%;
+    --ring: 152 100% 50%;
 
     /* Glass effect colors */
     --glass-bg: 240 10% 8% / 0.8;
     --glass-border: 240 10% 20% / 0.3;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(270 91% 65%));
+    --gradient-primary: linear-gradient(135deg, hsl(152 100% 50%), hsl(152 80% 40%));
     --gradient-secondary: linear-gradient(135deg, hsl(240 10% 8%), hsl(240 10% 12%));
-    --gradient-hero: linear-gradient(135deg, hsl(240 10% 3.9%) 0%, hsl(262 83% 8%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 0%) 0%, hsl(152 50% 5%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(240 10% 6%) 0%, hsl(240 10% 8%) 100%);
 
     /* Shadows */
     --shadow-glass: 0 8px 32px hsl(240 10% 3.9% / 0.37);
-    --shadow-glow: 0 0 40px hsl(262 83% 58% / 0.15);
-    --shadow-primary: 0 10px 40px hsl(262 83% 58% / 0.3);
+    --shadow-glow: 0 0 40px hsl(152 100% 50% / 0.15);
+    --shadow-primary: 0 10px 40px hsl(152 100% 50% / 0.3);
+    --shadow-electric: 0 0 60px hsl(152 100% 50% / 0.4);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -80,12 +85,40 @@
     /* Sidebar (not used but keeping for compatibility) */
     --sidebar-background: 240 10% 6%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 262 83% 58%;
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary: 152 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 240 10% 8%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 10% 12%;
-    --sidebar-ring: 262 83% 58%;
+    --sidebar-ring: 152 100% 50%;
+  }
+}
+
+/* Prelanding specific animations */
+@keyframes pulse-cta {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 20px hsl(152 100% 50% / 0.3);
+  }
+  50% { 
+    transform: scale(1.02); 
+    box-shadow: 0 0 40px hsl(152 100% 50% / 0.5);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
