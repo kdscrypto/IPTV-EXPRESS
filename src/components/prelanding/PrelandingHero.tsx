@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Play, Tv, Zap } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const PrelandingHero = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const goToPricing = () => {
     navigate("/#pricing");
-    // After navigation, scroll to pricing section
     setTimeout(() => {
       const pricingSection = document.getElementById("pricing");
       pricingSection?.scrollIntoView({ behavior: "smooth" });
@@ -37,21 +38,20 @@ const PrelandingHero = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/30 mb-8">
             <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Premium Streaming Service</span>
+            <span className="text-sm font-medium text-primary">{t("main.hero.streamingPremium")}</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-6">
-            Stop Overpaying for{" "}
+            {t("prelanding.hero.headline").split("Cable TV")[0]}
             <span className="text-primary">Cable TV.</span>
             <br />
-            <span className="text-foreground">Get Unlimited Access Today.</span>
+            <span className="text-foreground">{t("prelanding.hero.headline").includes("Arrêtez") ? "Obtenez un accès illimité aujourd'hui." : "Get Unlimited Access Today."}</span>
           </h1>
 
           {/* Sub-headline */}
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Enjoy <span className="text-primary font-semibold">10,000+ Channels</span>, Movies, and Series in{" "}
-            <span className="text-primary font-semibold">4K/HD</span> without freezing.
+            {t("prelanding.hero.subheadline")}
           </p>
 
           {/* CTA Button */}
@@ -63,7 +63,7 @@ const PrelandingHero = () => {
               style={{ animation: "pulse-cta 2s ease-in-out infinite" }}
             >
               <Play className="w-5 h-5 mr-2" />
-              Check Availability & Price
+              {t("prelanding.hero.cta")}
             </Button>
           </div>
 
@@ -81,7 +81,7 @@ const PrelandingHero = () => {
             <div className="w-px h-4 bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
               <span className="text-primary">★★★★★</span>
-              <span>Trusted by 50,000+</span>
+              <span>{t("prelanding.hero.trusted")}</span>
             </div>
           </div>
         </div>

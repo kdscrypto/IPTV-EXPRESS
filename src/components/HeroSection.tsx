@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlayCircle, Shield, Users } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 import DemoModal from "@/components/DemoModal";
 import DynamicBackground from "@/components/DynamicBackground";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const HeroSection = () => {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const { t } = useLanguage();
+
   const scrollToPricing = () => {
     const pricingSection = document.getElementById('pricing');
     pricingSection?.scrollIntoView({ behavior: 'smooth' });
@@ -31,26 +34,25 @@ const HeroSection = () => {
               <PlayCircle className="w-6 h-6 text-primary" />
             </div>
             <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
-              Streaming Premium
+              {t("main.hero.streamingPremium")}
             </span>
           </div>
 
           {/* Titre principal */}
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none">
-            <span className="gradient-text">IPTV</span>
+            <span className="gradient-text">{t("main.hero.title1")}</span>
             <br />
-            <span className="text-foreground">Express</span>
+            <span className="text-foreground">{t("main.hero.title2")}</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-            Accédez à plus de <strong className="text-primary">15,000 chaînes</strong> et 
-            <strong className="text-primary"> 80,000 VOD</strong> en qualité 4K. 
-            Compatible avec tous vos appareils préférés.
+            {t("main.hero.description")} <strong className="text-primary">{t("main.hero.channels")}</strong> {t("main.hero.and")}
+            <strong className="text-primary"> {t("main.hero.vod")}</strong> {t("main.hero.descriptionEnd")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8 sm:mb-12 sm:justify-end mt-4">
             <Button variant="glass" size="lg" onClick={() => setIsDemoOpen(true)}>
-              Voir la démo
+              {t("main.hero.demo")}
             </Button>
             <Button 
               variant="hero" 
@@ -58,7 +60,7 @@ const HeroSection = () => {
               onClick={scrollToPricing}
               className="group"
             >
-              Commencer maintenant
+              {t("main.hero.cta")}
               <PlayCircle className="w-4 h-4 transition-transform group-hover:scale-110" />
             </Button>
           </div>

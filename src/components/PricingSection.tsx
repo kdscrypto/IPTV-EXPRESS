@@ -1,15 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Check, Crown, Star, Zap, Shield } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface PricingPlan {
   id: string;
-  name: string;
-  duration: string;
+  nameKey: string;
+  durationKey: string;
+  durationMonths: number;
   price: number;
   originalPrice?: number;
   popular?: boolean;
   premium?: boolean;
-  features: string[];
+  featuresKeys: string[];
   icon: React.ComponentType<{ className?: string }>;
 }
 
@@ -18,76 +20,82 @@ interface PricingSectionProps {
 }
 
 const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
+  const { t, language } = useLanguage();
+
   const plans: PricingPlan[] = [
     {
       id: "1month",
-      name: "Starter",
-      duration: "1 mois",
+      nameKey: "main.pricing.plans.starter",
+      durationKey: "main.pricing.month",
+      durationMonths: 1,
       price: 15,
       originalPrice: 30,
-      features: [
-        "15,000+ chaînes live",
-        "80,000+ films & séries",
-        "Qualité Full HD",
-        "2 connexions simultanées",
-        "Support par email",
-        "Compatible tous appareils"
+      featuresKeys: [
+        "main.pricing.features.liveChannels",
+        "main.pricing.features.moviesAndSeries",
+        "main.pricing.features.fullHd",
+        "main.pricing.features.connections2",
+        "main.pricing.features.emailSupport",
+        "main.pricing.features.allDevices"
       ],
       icon: Zap
     },
     {
       id: "3months",
-      name: "Découverte",
-      duration: "3 mois",
+      nameKey: "main.pricing.plans.discovery",
+      durationKey: "main.pricing.months",
+      durationMonths: 3,
       price: 25,
       originalPrice: 50,
-      features: [
-        "15,000+ chaînes live",
-        "80,000+ films & séries",
-        "Qualité Full HD",
-        "3 connexions simultanées",
-        "Support par email",
-        "Compatible tous appareils"
+      featuresKeys: [
+        "main.pricing.features.liveChannels",
+        "main.pricing.features.moviesAndSeries",
+        "main.pricing.features.fullHd",
+        "main.pricing.features.connections3",
+        "main.pricing.features.emailSupport",
+        "main.pricing.features.allDevices"
       ],
       icon: Zap
     },
     {
       id: "6months",
-      name: "Populaire",
-      duration: "6 mois",
+      nameKey: "main.pricing.plans.popular",
+      durationKey: "main.pricing.months",
+      durationMonths: 6,
       price: 45,
       originalPrice: 90,
       popular: true,
-      features: [
-        "15,000+ chaînes live",
-        "80,000+ films & séries",
-        "Qualité 4K Ultra HD",
-        "5 connexions simultanées",
-        "Support 24/7",
-        "Compatible tous appareils",
-        "Catch-up TV 7 jours",
-        "EPG complet"
+      featuresKeys: [
+        "main.pricing.features.liveChannels",
+        "main.pricing.features.moviesAndSeries",
+        "main.pricing.features.uhd4k",
+        "main.pricing.features.connections5",
+        "main.pricing.features.support247",
+        "main.pricing.features.allDevices",
+        "main.pricing.features.catchup7",
+        "main.pricing.features.epg"
       ],
       icon: Star
     },
     {
       id: "12months",
-      name: "Premium",
-      duration: "12 mois",
+      nameKey: "main.pricing.plans.premium",
+      durationKey: "main.pricing.months",
+      durationMonths: 12,
       price: 60,
       originalPrice: 120,
       premium: true,
-      features: [
-        "15,000+ chaînes live",
-        "80,000+ films & séries",
-        "Qualité 4K Ultra HD",
-        "5 connexions simultanées",
-        "Support VIP prioritaire",
-        "Compatible tous appareils",
-        "Catch-up TV 14 jours",
-        "EPG complet",
-        "Accès applications premium",
-        "Mise à jour gratuite à vie"
+      featuresKeys: [
+        "main.pricing.features.liveChannels",
+        "main.pricing.features.moviesAndSeries",
+        "main.pricing.features.uhd4k",
+        "main.pricing.features.connections5",
+        "main.pricing.features.vipSupport",
+        "main.pricing.features.allDevices",
+        "main.pricing.features.catchup14",
+        "main.pricing.features.epg",
+        "main.pricing.features.premiumApps",
+        "main.pricing.features.lifetimeUpdates"
       ],
       icon: Crown
     }
@@ -110,18 +118,17 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-black mb-6">
-            <span className="text-foreground">Nos</span>
+            <span className="text-foreground">{t("main.pricing.title")}</span>
             <br />
-            <span className="gradient-text">Abonnements</span>
+            <span className="gradient-text">{t("main.pricing.titleHighlight")}</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Choisissez l'abonnement qui correspond à vos besoins. 
-            Tous nos plans incluent un accès complet et sans engagement.
+            {t("main.pricing.subtitle")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <div key={plan.id} className={getCardClassName(plan)}>
               {/* Premium Glow Effect */}
               {plan.premium && (
@@ -132,7 +139,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-gradient-primary text-white px-6 py-2 rounded-full text-sm font-bold shadow-primary">
-                    ⚡ PLUS POPULAIRE
+                    {t("main.pricing.mostPopular")}
                   </div>
                 </div>
               )}
@@ -141,7 +148,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
               {plan.premium && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-gradient-primary text-white px-6 py-2 rounded-full text-sm font-bold shadow-primary">
-                    👑 PREMIUM
+                    {t("main.pricing.premium")}
                   </div>
                 </div>
               )}
@@ -155,8 +162,8 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="text-2xl font-bold text-center mb-2">{plan.name}</h3>
-                <p className="text-muted-foreground text-center mb-6">{plan.duration}</p>
+                <h3 className="text-2xl font-bold text-center mb-2">{t(plan.nameKey)}</h3>
+                <p className="text-muted-foreground text-center mb-6">{plan.durationMonths} {t(plan.durationKey)}</p>
 
                 {/* Pricing */}
                 <div className="text-center mb-8">
@@ -173,7 +180,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                   <p className="text-sm text-muted-foreground">
                     {plan.originalPrice && (
                       <span className="text-success font-semibold">
-                        Économisez ${plan.originalPrice - plan.price}
+                        {t("main.pricing.save")} ${plan.originalPrice - plan.price}
                       </span>
                     )}
                   </p>
@@ -181,10 +188,10 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
 
                 {/* Features */}
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, idx) => (
+                  {plan.featuresKeys.map((featureKey, idx) => (
                     <li key={idx} className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
+                      <span className="text-sm">{t(featureKey)}</span>
                     </li>
                   ))}
                 </ul>
@@ -196,7 +203,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                   className="w-full"
                   onClick={() => onSelectPlan(plan.id, plan.price)}
                 >
-                  Choisir ce plan
+                  {t("main.pricing.choosePlan")}
                 </Button>
               </div>
             </div>
@@ -208,15 +215,15 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
           <div className="flex flex-wrap justify-center items-center gap-8 text-muted-foreground">
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-primary" />
-              <span className="text-sm">Paiement sécurisé</span>
+              <span className="text-sm">{t("main.pricing.trust.securePayment")}</span>
             </div>
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 text-primary" />
-              <span className="text-sm">Activation instantanée</span>
+              <span className="text-sm">{t("main.pricing.trust.instantActivation")}</span>
             </div>
             <div className="flex items-center gap-2">
               <Star className="w-5 h-5 text-primary" />
-              <span className="text-sm">Satisfaction garantie</span>
+              <span className="text-sm">{t("main.pricing.trust.satisfactionGuarantee")}</span>
             </div>
           </div>
         </div>

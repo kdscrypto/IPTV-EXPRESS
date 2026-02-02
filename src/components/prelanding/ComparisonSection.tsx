@@ -1,21 +1,12 @@
 import { Check, X } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
+import { translations } from "@/i18n";
 
 const ComparisonSection = () => {
-  const oldCable = [
-    "Expensive monthly bills",
-    "Long-term contracts",
-    "Limited channel selection",
-    "Poor streaming quality",
-    "No multi-device support",
-  ];
-
-  const iptvExpress = [
-    "Affordable pricing",
-    "No contracts required",
-    "10,000+ channels",
-    "4K/HD quality streaming",
-    "Watch on any device",
-  ];
+  const { t, language } = useLanguage();
+  
+  const oldCable = translations[language].prelanding.comparison.oldCableItems;
+  const iptvExpress = translations[language].prelanding.comparison.iptvExpressItems;
 
   return (
     <section className="py-20 sm:py-28 bg-black relative overflow-hidden">
@@ -25,10 +16,10 @@ const ComparisonSection = () => {
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
-            Why Make the <span className="text-primary">Switch?</span>
+            {t("prelanding.comparison.title")} <span className="text-primary">{t("prelanding.comparison.titleHighlight")}</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            See how IPTV EXPRESS compares to traditional cable services
+            {t("prelanding.comparison.subtitle")}
           </p>
         </div>
 
@@ -39,7 +30,7 @@ const ComparisonSection = () => {
               <div className="w-12 h-12 rounded-full bg-destructive/20 flex items-center justify-center">
                 <X className="w-6 h-6 text-destructive" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-muted-foreground">Old Cable</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-muted-foreground">{t("prelanding.comparison.oldCable")}</h3>
             </div>
             <ul className="space-y-4">
               {oldCable.map((item, index) => (
@@ -63,7 +54,7 @@ const ComparisonSection = () => {
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                   <Check className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-primary">IPTV EXPRESS</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-primary">{t("prelanding.comparison.iptvExpress")}</h3>
               </div>
               <ul className="space-y-4">
                 {iptvExpress.map((item, index) => (

@@ -1,19 +1,22 @@
 import { Tv, Smartphone, Tablet, Monitor, Flame } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const DeviceBanner = () => {
+  const { t } = useLanguage();
+
   const devices = [
-    { icon: Tv, name: "Smart TV" },
-    { icon: Smartphone, name: "Android" },
-    { icon: Tablet, name: "Apple/iOS" },
-    { icon: Flame, name: "Firestick" },
-    { icon: Monitor, name: "MAG Box" },
+    { icon: Tv, nameKey: "prelanding.devices.smartTv" },
+    { icon: Smartphone, nameKey: "prelanding.devices.android" },
+    { icon: Tablet, nameKey: "prelanding.devices.apple" },
+    { icon: Flame, nameKey: "prelanding.devices.firestick" },
+    { icon: Monitor, nameKey: "prelanding.devices.magBox" },
   ];
 
   return (
     <section className="py-12 sm:py-16 bg-black border-y border-border/50">
       <div className="container mx-auto px-4 sm:px-6">
         <p className="text-center text-muted-foreground text-sm mb-8 uppercase tracking-widest font-medium">
-          Compatible with all your devices
+          {t("prelanding.deviceBanner.title")}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16">
           {devices.map((device, index) => (
@@ -25,7 +28,7 @@ const DeviceBanner = () => {
                 <device.icon className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
               </div>
               <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-                {device.name}
+                {t(device.nameKey)}
               </span>
             </div>
           ))}
