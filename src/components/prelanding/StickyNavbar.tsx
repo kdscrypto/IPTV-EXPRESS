@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const StickyNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -35,41 +38,45 @@ const StickyNavbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             <button
               onClick={() => scrollToSection("features")}
               className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
             >
-              Features
+              {t("common.features")}
             </button>
             <button
               onClick={() => scrollToSection("reviews")}
               className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
             >
-              Reviews
+              {t("common.reviews")}
             </button>
             <button
               onClick={() => scrollToSection("faq")}
               className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
             >
-              FAQ
+              {t("common.faq")}
             </button>
+            <LanguageSwitcher />
             <Button
               onClick={goToPricing}
               className="font-semibold"
             >
-              Get Started
+              {t("common.getStarted")}
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-foreground"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-3 md:hidden">
+            <LanguageSwitcher />
+            <button
+              className="p-2 text-foreground"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -80,25 +87,25 @@ const StickyNavbar = () => {
                 onClick={() => scrollToSection("features")}
                 className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
               >
-                Features
+                {t("common.features")}
               </button>
               <button
                 onClick={() => scrollToSection("reviews")}
                 className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
               >
-                Reviews
+                {t("common.reviews")}
               </button>
               <button
                 onClick={() => scrollToSection("faq")}
                 className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
               >
-                FAQ
+                {t("common.faq")}
               </button>
               <Button
                 onClick={goToPricing}
                 className="w-full font-semibold"
               >
-                Get Started
+                {t("common.getStarted")}
               </Button>
             </div>
           </div>

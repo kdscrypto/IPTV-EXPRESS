@@ -6,9 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, MessageCircle, Phone, Clock, MapPin, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const ContactSection = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,8 +27,8 @@ const ContactSection = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     toast({
-      title: "Message envoyé !",
-      description: "Nous vous répondrons dans les plus brefs délais.",
+      title: t("main.contact.messageSent"),
+      description: t("main.contact.messageResponse"),
     });
 
     setFormData({ name: '', email: '', subject: '', message: '' });
@@ -40,31 +42,31 @@ const ContactSection = () => {
   const contactInfo = [
     {
       icon: MessageCircle,
-      title: "Chat en direct",
-      value: "Disponible 24/7",
-      description: "Support instantané via notre chat",
-      action: "Ouvrir le chat"
+      titleKey: "main.contact.liveChat",
+      valueKey: "main.contact.available247",
+      descriptionKey: "main.contact.instantSupport",
+      actionKey: "main.contact.openChat"
     },
     {
       icon: Mail,
-      title: "Email",
-      value: "support@iptv-premium.com",
-      description: "Réponse sous 2h en moyenne",
-      action: "Envoyer un email"
+      titleKey: "main.contact.email",
+      valueKey: "main.contact.emailAddress",
+      descriptionKey: "main.contact.avgResponse",
+      actionKey: "main.contact.sendEmail"
     },
     {
       icon: Phone,
-      title: "Téléphone",
-      value: "+33 1 XX XX XX XX",
-      description: "Lun-Dim : 8h-22h",
-      action: "Appeler maintenant"
+      titleKey: "main.contact.phone",
+      valueKey: "main.contact.phoneNumber",
+      descriptionKey: "main.contact.phoneHours",
+      actionKey: "main.contact.callNow"
     },
     {
       icon: Clock,
-      title: "Support prioritaire",
-      value: "Clients Premium",
-      description: "Assistance VIP dédiée",
-      action: "Accès VIP"
+      titleKey: "main.contact.prioritySupport",
+      valueKey: "main.contact.premiumClients",
+      descriptionKey: "main.contact.vipAssistance",
+      actionKey: "main.contact.vipAccess"
     }
   ];
 
@@ -75,13 +77,12 @@ const ContactSection = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-black mb-6">
-            <span className="gradient-text">Contactez</span>
+            <span className="gradient-text">{t("main.contact.title")}</span>
             <br />
-            <span className="text-foreground">Notre Équipe</span>
+            <span className="text-foreground">{t("main.contact.titleHighlight")}</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Une question, besoin d'aide ou d'informations ? Notre équipe support 
-            est disponible 24/7 pour vous accompagner.
+            {t("main.contact.subtitle")}
           </p>
         </div>
 
@@ -96,15 +97,15 @@ const ContactSection = () => {
                       <info.icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg">{info.title}</CardTitle>
-                      <CardDescription>{info.description}</CardDescription>
+                      <CardTitle className="text-lg">{t(info.titleKey)}</CardTitle>
+                      <CardDescription>{t(info.descriptionKey)}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="font-semibold text-primary mb-3">{info.value}</p>
+                  <p className="font-semibold text-primary mb-3">{t(info.valueKey)}</p>
                   <Button variant="outline" size="sm" className="w-full">
-                    {info.action}
+                    {t(info.actionKey)}
                   </Button>
                 </CardContent>
               </Card>
@@ -115,18 +116,18 @@ const ContactSection = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-warning">
                   <MapPin className="w-5 h-5" />
-                  Urgence technique
+                  {t("main.contact.technicalEmergency")}
                 </CardTitle>
                 <CardDescription>
-                  Pour les interruptions de service majeures
+                  {t("main.contact.majorOutages")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Hotline disponible 24/7 pour les problèmes critiques affectant votre service IPTV.
+                  {t("main.contact.emergencyHotline")}
                 </p>
                 <Button variant="outline" size="sm" className="w-full border-warning/50 text-warning hover:bg-warning/10">
-                  Signaler une urgence
+                  {t("main.contact.reportEmergency")}
                 </Button>
               </CardContent>
             </Card>
@@ -138,10 +139,10 @@ const ContactSection = () => {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Send className="w-6 h-6 text-primary" />
-                  Envoyez-nous un message
+                  {t("main.contact.sendMessage")}
                 </CardTitle>
                 <CardDescription className="text-base">
-                  Décrivez votre demande et nous vous répondrons rapidement
+                  {t("main.contact.describeRequest")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -149,11 +150,11 @@ const ContactSection = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-base font-semibold">
-                        Nom complet *
+                        {t("main.contact.fullName")}
                       </Label>
                       <Input
                         id="name"
-                        placeholder="Votre nom et prénom"
+                        placeholder={t("main.contact.namePlaceholder")}
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         required
@@ -162,12 +163,12 @@ const ContactSection = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-base font-semibold">
-                        Email *
+                        {t("main.contact.emailLabel")}
                       </Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="votre@email.com"
+                        placeholder={t("main.contact.emailPlaceholder")}
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
@@ -178,11 +179,11 @@ const ContactSection = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="subject" className="text-base font-semibold">
-                      Sujet *
+                      {t("main.contact.subject")}
                     </Label>
                     <Input
                       id="subject"
-                      placeholder="Objet de votre message"
+                      placeholder={t("main.contact.subjectPlaceholder")}
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
                       required
@@ -192,11 +193,11 @@ const ContactSection = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="message" className="text-base font-semibold">
-                      Message *
+                      {t("main.contact.message")}
                     </Label>
                     <Textarea
                       id="message"
-                      placeholder="Décrivez votre demande en détail..."
+                      placeholder={t("main.contact.messagePlaceholder")}
                       value={formData.message}
                       onChange={(e) => handleInputChange('message', e.target.value)}
                       required
@@ -215,23 +216,23 @@ const ContactSection = () => {
                     {isSubmitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                        Envoi en cours...
+                        {t("main.contact.sending")}
                       </>
                     ) : (
                       <>
                         <Send className="w-5 h-5 mr-2" />
-                        Envoyer le message
+                        {t("main.contact.send")}
                       </>
                     )}
                   </Button>
                 </form>
 
                 <div className="mt-6 p-4 glass rounded-lg border border-success/30 bg-success/5">
-                  <h4 className="font-semibold text-success mb-2">Temps de réponse</h4>
+                  <h4 className="font-semibold text-success mb-2">{t("main.contact.responseTime")}</h4>
                   <p className="text-sm text-muted-foreground">
-                    • Support technique : <strong>Moins de 30 minutes</strong><br />
-                    • Questions commerciales : <strong>Moins de 2 heures</strong><br />
-                    • Clients Premium : <strong>Support prioritaire instantané</strong>
+                    • {t("main.contact.technicalSupport")} <strong>{t("main.contact.lessThan30min")}</strong><br />
+                    • {t("main.contact.commercialQuestions")} <strong>{t("main.contact.lessThan2hours")}</strong><br />
+                    • {t("main.contact.premiumClientsResponse")} <strong>{t("main.contact.instantPriority")}</strong>
                   </p>
                 </div>
               </CardContent>

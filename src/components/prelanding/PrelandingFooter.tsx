@@ -1,4 +1,8 @@
+import { useLanguage } from "@/hooks/useLanguage";
+
 const PrelandingFooter = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="py-8 bg-black border-t border-border/50">
       <div className="container mx-auto px-4 sm:px-6">
@@ -12,16 +16,16 @@ const PrelandingFooter = () => {
           {/* Links */}
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">
-              Terms of Service
+              {t("common.termsOfService")}
             </a>
             <a href="#" className="hover:text-foreground transition-colors">
-              Privacy Policy
+              {t("common.privacyPolicy")}
             </a>
           </div>
 
           {/* Copyright */}
           <p className="text-sm text-muted-foreground">
-            © 2026 IPTV EXPRESS. All rights reserved.
+            {t("prelanding.footer.copyright")}
           </p>
         </div>
       </div>

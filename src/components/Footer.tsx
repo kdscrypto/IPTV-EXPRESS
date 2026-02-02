@@ -1,30 +1,32 @@
-import { Tv, Shield, Clock, Mail, Phone, MapPin } from "lucide-react";
+import { Shield, Clock, Mail, Phone, MapPin } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const Footer = () => {
+  const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   const companyLinks = [
-    { label: "À propos", href: "#about" },
-    { label: "Nos services", href: "#features" },
-    { label: "Tarifs", href: "#pricing" },
-    { label: "Blog", href: "#blog" },
-    { label: "Carrières", href: "#careers" }
+    { labelKey: "main.footer.about", href: "#about" },
+    { labelKey: "main.footer.ourServices", href: "#features" },
+    { labelKey: "main.footer.pricing", href: "#pricing" },
+    { labelKey: "main.footer.blog", href: "#blog" },
+    { labelKey: "main.footer.careers", href: "#careers" }
   ];
 
   const supportLinks = [
-    { label: "Centre d'aide", href: "#help" },
-    { label: "Installation", href: "#setup" },
-    { label: "FAQ", href: "#faq" },
-    { label: "Contact", href: "#contact" },
-    { label: "Signaler un problème", href: "#report" }
+    { labelKey: "main.footer.helpCenter", href: "#help" },
+    { labelKey: "main.footer.installation", href: "#setup" },
+    { labelKey: "common.faq", href: "#faq" },
+    { labelKey: "main.footer.contact", href: "#contact" },
+    { labelKey: "main.footer.reportIssue", href: "#report" }
   ];
 
   const legalLinks = [
-    { label: "Mentions légales", href: "#legal" },
-    { label: "Politique de confidentialité", href: "#privacy" },
-    { label: "Conditions d'utilisation", href: "#terms" },
-    { label: "Politique de cookies", href: "#cookies" },
-    { label: "RGPD", href: "#gdpr" }
+    { labelKey: "main.footer.legalNotice", href: "#legal" },
+    { labelKey: "main.footer.privacy", href: "#privacy" },
+    { labelKey: "main.footer.terms", href: "#terms" },
+    { labelKey: "main.footer.cookies", href: "#cookies" },
+    { labelKey: "main.footer.gdpr", href: "#gdpr" }
   ];
 
   return (
@@ -48,26 +50,25 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Le leader français de l'IPTV express avec plus de 15,000 chaînes 
-              et 80,000 contenus VOD. Qualité 4K, support 24/7.
+              {t("main.footer.description")}
             </p>
             
             {/* Trust Badges */}
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm">
                 <Shield className="w-4 h-4 text-primary" />
-                <span>Service sécurisé SSL</span>
+                <span>{t("main.footer.secureService")}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="w-4 h-4 text-primary" />
-                <span>Support 24/7 garanti</span>
+                <span>{t("main.footer.support247")}</span>
               </div>
             </div>
           </div>
 
           {/* Company Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Entreprise</h4>
+            <h4 className="text-lg font-bold mb-6">{t("main.footer.company")}</h4>
             <nav className="space-y-3">
               {companyLinks.map((link, index) => (
                 <a
@@ -75,7 +76,7 @@ const Footer = () => {
                   href={link.href}
                   className="block text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </a>
               ))}
             </nav>
@@ -83,7 +84,7 @@ const Footer = () => {
 
           {/* Support Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Support</h4>
+            <h4 className="text-lg font-bold mb-6">{t("main.footer.support")}</h4>
             <nav className="space-y-3">
               {supportLinks.map((link, index) => (
                 <a
@@ -91,7 +92,7 @@ const Footer = () => {
                   href={link.href}
                   className="block text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </a>
               ))}
             </nav>
@@ -99,12 +100,12 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Contact</h4>
+            <h4 className="text-lg font-bold mb-6">{t("main.footer.contactTitle")}</h4>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">Email</p>
+                  <p className="font-medium">{t("main.footer.emailLabel")}</p>
                   <a 
                     href="mailto:support@iptv-express.fr" 
                     className="text-muted-foreground hover:text-primary text-sm transition-colors"
@@ -117,7 +118,7 @@ const Footer = () => {
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">Téléphone</p>
+                  <p className="font-medium">{t("main.footer.phoneLabel")}</p>
                   <a 
                     href="tel:+33142867392" 
                     className="text-muted-foreground hover:text-primary text-sm transition-colors"
@@ -130,7 +131,7 @@ const Footer = () => {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">Adresse</p>
+                  <p className="font-medium">{t("main.footer.addressLabel")}</p>
                   <p className="text-muted-foreground text-sm">
                     123 Avenue de la République<br />
                     75011 Paris, France
@@ -150,7 +151,7 @@ const Footer = () => {
                 href={link.href}
                 className="text-sm text-muted-foreground hover:text-primary transition-colors"
               >
-                {link.label}
+                {t(link.labelKey)}
               </a>
             ))}
           </div>
@@ -161,17 +162,17 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
               <p className="text-muted-foreground text-sm">
-                © {currentYear} IPTV Express. Tous droits réservés.
+                © {currentYear} IPTV Express. {t("main.footer.allRightsReserved")}
               </p>
               <p className="text-muted-foreground text-xs mt-1">
-                Société française - SIRET : 123 456 789 00012
+                {t("main.footer.companyInfo")}
               </p>
             </div>
 
             <div className="flex items-center gap-6 text-xs text-muted-foreground">
-              <span>🇫🇷 Service français</span>
-              <span>🔒 SSL sécurisé</span>
-              <span>⚡ 99.9% uptime</span>
+              <span>{t("main.footer.frenchService")}</span>
+              <span>{t("main.footer.sslSecured")}</span>
+              <span>{t("main.footer.uptime")}</span>
             </div>
           </div>
         </div>
@@ -179,9 +180,7 @@ const Footer = () => {
         {/* Disclaimer */}
         <div className="mt-8 p-4 glass rounded-lg border border-warning/30 bg-warning/5">
           <p className="text-xs text-muted-foreground text-center leading-relaxed">
-            <strong>Disclaimer :</strong> Notre service IPTV respecte toutes les réglementations en vigueur. 
-            Nous proposons uniquement des contenus légalement distribués et respectons les droits d'auteur. 
-            L'utilisation de notre service est soumise à nos conditions d'utilisation.
+            <strong>{t("main.footer.disclaimer")}</strong> {t("main.footer.disclaimerText")}
           </p>
         </div>
       </div>

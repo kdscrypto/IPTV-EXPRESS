@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { sendToWhatsApp, getDeviceLabel } from "@/utils/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
 import PaymentMethodComparison from "@/components/PaymentMethodComparison";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ActivationFormData {
   email: string;
@@ -32,6 +33,7 @@ interface ActivationFormProps {
 
 const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: ActivationFormProps) => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<ActivationFormData>({
     email: '',
     confirmEmail: '',
@@ -42,11 +44,11 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
   const [paymentMethod, setPaymentMethod] = useState<'crypto' | 'whatsapp'>('crypto');
 
   const deviceOptions = [
-    { value: 'smart-tv', label: 'Smart TV (Samsung, LG, Sony...)', icon: Tv },
-    { value: 'android-tv', label: 'Android TV / TV Box', icon: MonitorSpeaker },
-    { value: 'mobile', label: 'Smartphone / Tablette', icon: Smartphone },
-    { value: 'computer', label: 'Ordinateur (Windows, Mac, Linux)', icon: MonitorSpeaker },
-    { value: 'other', label: 'Autre appareil', icon: Shield }
+    { value: 'smart-tv', labelKey: 'main.activation.smartTv', icon: Tv },
+    { value: 'android-tv', labelKey: 'main.activation.androidTv', icon: MonitorSpeaker },
+    { value: 'mobile', labelKey: 'main.activation.mobile', icon: Smartphone },
+    { value: 'computer', labelKey: 'main.activation.computer', icon: MonitorSpeaker },
+    { value: 'other', labelKey: 'main.activation.otherDevice', icon: Shield }
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,8 +58,8 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
     // Validation
     if (formData.email !== formData.confirmEmail) {
       toast({
-        title: "Erreur de validation",
-        description: "Les adresses email ne correspondent pas.",
+        title: t("main.activation.validationError"),
+        description: t("main.activation.emailMismatch"),
         variant: "destructive"
       });
       setIsSubmitting(false);
@@ -66,8 +68,8 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
 
     if (!selectedPlan) {
       toast({
-        title: "Plan non sélectionné",
-        description: "Veuillez d'abord choisir un plan d'abonnement.",
+        title: t("main.activation.noPlanSelected"),
+        description: t("main.activation.selectPlanFirst"),
         variant: "destructive"
       });
       setIsSubmitting(false);
@@ -92,8 +94,8 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
 
         if (data?.success) {
           toast({
-            title: "Paiement créé !",
-            description: "Votre paiement crypto a été initialisé avec succès.",
+            title: t("main.activation.paymentCreated"),
+            description: t("main.activation.cryptoInitialized"),
           });
 
           // Call parent callback with payment data
@@ -122,8 +124,8 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
         sendToWhatsApp(whatsappData);
 
         toast({
-          title: "Redirection vers WhatsApp",
-          description: "Votre demande est automatiquement transférée à notre support.",
+          title: t("main.activation.redirectWhatsapp"),
+          description: t("main.activation.requestTransferred"),
         });
 
         // Reset form
@@ -140,8 +142,8 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
     } catch (error) {
       console.error('Error:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur est survenue. Veuillez réessayer.",
+        title: t("main.activation.error"),
+        description: error instanceof Error ? error.message : t("main.activation.tryAgain"),
         variant: "destructive"
       });
     }
@@ -159,12 +161,12 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              <span className="text-foreground">Formulaire</span>
+              <span className="text-foreground">{t("main.activation.title")}</span>
               <br />
-              <span className="gradient-text">d'Activation</span>
+              <span className="gradient-text">{t("main.activation.titleHighlight")}</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              Remplissez ce formulaire pour recevoir vos identifiants de connexion IPTV
+              {t("main.activation.subtitle")}
             </p>
           </div>
 
@@ -174,10 +176,10 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                 <div className="p-2 bg-gradient-primary rounded-lg">
                   <CheckCircle className="w-6 h-6 text-white" />
                 </div>
-                Informations d'activation
+                {t("main.activation.activationInfo")}
               </CardTitle>
               <CardDescription className="text-base">
-                Vos informations sont sécurisées et envoyées directement à notre support WhatsApp
+                {t("main.activation.secureInfo")}
               </CardDescription>
               
               {/* Plan sélectionné */}
@@ -186,7 +188,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Badge variant="secondary" className="bg-gradient-primary text-white">
-                        Plan sélectionné
+                        {t("main.activation.selectedPlan")}
                       </Badge>
                       <span className="font-semibold text-lg">
                         {selectedPlan.name} - ${selectedPlan.price}
@@ -197,7 +199,6 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                       size="sm"
                       onClick={() => {
                         onClearPlan?.();
-                        // Retourner à la section pricing
                         const pricingSection = document.getElementById('pricing');
                         if (pricingSection) {
                           pricingSection.scrollIntoView({ behavior: 'smooth' });
@@ -206,7 +207,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                       className="text-muted-foreground hover:text-foreground"
                     >
                       <X className="w-4 h-4 mr-1" />
-                      Changer
+                      {t("main.activation.change")}
                     </Button>
                   </div>
                 </div>
@@ -218,9 +219,9 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                   <div className="flex items-center gap-3">
                     <ArrowUp className="w-5 h-5 text-destructive" />
                     <div>
-                      <p className="font-semibold text-destructive">Plan non sélectionné</p>
+                      <p className="font-semibold text-destructive">{t("main.activation.noPlanSelected")}</p>
                       <p className="text-sm text-muted-foreground">
-                        Veuillez d'abord choisir un plan d'abonnement ci-dessus
+                        {t("main.activation.selectPlanFirst")}
                       </p>
                     </div>
                   </div>
@@ -233,7 +234,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                 {/* Payment Method Selection */}
                 <div className="space-y-4">
                   <Label className="text-base font-semibold">
-                    Méthode de paiement
+                    {t("main.activation.paymentMethod")}
                   </Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button
@@ -247,12 +248,12 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                     >
                       <div className="flex flex-col items-center gap-2">
                         <Wallet className={`w-8 h-8 ${paymentMethod === 'crypto' ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <span className="font-semibold">Paiement Crypto</span>
+                        <span className="font-semibold">{t("main.activation.cryptoPayment")}</span>
                         <span className="text-xs text-muted-foreground text-center">
-                          BTC, ETH, USDT et 300+ cryptos
+                          {t("main.activation.cryptoDescription")}
                         </span>
                         <Badge variant="secondary" className="bg-green-500/20 text-green-700 dark:text-green-300">
-                          Recommandé
+                          {t("main.activation.recommended")}
                         </Badge>
                       </div>
                     </button>
@@ -268,9 +269,9 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                     >
                       <div className="flex flex-col items-center gap-2">
                         <MessageSquare className={`w-8 h-8 ${paymentMethod === 'whatsapp' ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <span className="font-semibold">WhatsApp Support</span>
+                        <span className="font-semibold">{t("main.activation.whatsappSupport")}</span>
                         <span className="text-xs text-muted-foreground text-center">
-                          Contact direct avec le support
+                          {t("main.activation.whatsappDescription")}
                         </span>
                       </div>
                     </button>
@@ -281,12 +282,12 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-base font-semibold flex items-center gap-2">
                     <Mail className="w-4 h-4 text-primary" />
-                    Adresse email
+                    {t("main.activation.emailAddress")}
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="votre@email.com"
+                    placeholder={t("main.activation.emailPlaceholder")}
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     required
@@ -297,12 +298,12 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                 {/* Confirm Email */}
                 <div className="space-y-2">
                   <Label htmlFor="confirmEmail" className="text-base font-semibold">
-                    Confirmez votre email
+                    {t("main.activation.confirmEmail")}
                   </Label>
                   <Input
                     id="confirmEmail"
                     type="email"
-                    placeholder="Confirmez votre adresse email"
+                    placeholder={t("main.activation.confirmEmailPlaceholder")}
                     value={formData.confirmEmail}
                     onChange={(e) => handleInputChange('confirmEmail', e.target.value)}
                     required
@@ -314,18 +315,18 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                 <div className="space-y-2">
                   <Label className="text-base font-semibold flex items-center gap-2">
                     <Tv className="w-4 h-4 text-primary" />
-                    Type d'appareil principal
+                    {t("main.activation.deviceType")}
                   </Label>
                   <Select value={formData.device} onValueChange={(value) => handleInputChange('device', value)}>
                     <SelectTrigger className="h-12 glass border-primary/20 focus:border-primary/50">
-                      <SelectValue placeholder="Sélectionnez votre appareil" />
+                      <SelectValue placeholder={t("main.activation.selectDevice")} />
                     </SelectTrigger>
                     <SelectContent>
                       {deviceOptions.map((device) => (
                         <SelectItem key={device.value} value={device.value}>
                           <div className="flex items-center gap-3">
                             <device.icon className="w-4 h-4" />
-                            <span>{device.label}</span>
+                            <span>{t(device.labelKey)}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -336,11 +337,11 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                 {/* Device Info (Optional) */}
                 <div className="space-y-2">
                   <Label htmlFor="deviceInfo" className="text-base font-semibold">
-                    Informations supplémentaires (optionnel)
+                    {t("main.activation.additionalInfo")}
                   </Label>
                   <Input
                     id="deviceInfo"
-                    placeholder="Ex: Marque et modèle de votre appareil"
+                    placeholder={t("main.activation.additionalInfoPlaceholder")}
                     value={formData.deviceInfo}
                     onChange={(e) => handleInputChange('deviceInfo', e.target.value)}
                     className="h-12 glass border-primary/20 focus:border-primary/50"
@@ -352,10 +353,9 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                   <div className="flex items-start gap-3">
                     <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                     <div className="text-sm">
-                      <p className="font-semibold text-primary mb-1">Sécurité & Confidentialité</p>
+                      <p className="font-semibold text-primary mb-1">{t("main.activation.security")}</p>
                       <p className="text-muted-foreground leading-relaxed">
-                        Vos données sont chiffrées et protégées. Nous ne partageons jamais vos informations 
-                        avec des tiers et respectons strictement le RGPD.
+                        {t("main.activation.securityText")}
                       </p>
                     </div>
                   </div>
@@ -372,19 +372,19 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                      Envoi en cours...
+                      {t("main.contact.sending")}
                     </>
                   ) : (
                     <>
                       {paymentMethod === 'crypto' ? (
                         <>
                           <Wallet className="w-5 h-5 mr-2" />
-                          Procéder au paiement crypto
+                          {t("main.activation.proceedCrypto")}
                         </>
                       ) : (
                         <>
                           <MessageSquare className="w-5 h-5 mr-2" />
-                          Envoyer vers WhatsApp Support
+                          {t("main.activation.sendWhatsapp")}
                         </>
                       )}
                     </>
@@ -400,16 +400,16 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
           {/* Process Steps */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { step: "1", title: "Sélection", desc: "Choisissez votre plan IPTV" },
-              { step: "2", title: "Paiement", desc: "Crypto ou WhatsApp" },
-              { step: "3", title: "Activation", desc: "Recevez vos identifiants" }
+              { step: "1", titleKey: "main.activation.step1", descKey: "main.activation.step1Desc" },
+              { step: "2", titleKey: "main.activation.step2", descKey: "main.activation.step2Desc" },
+              { step: "3", titleKey: "main.activation.step3", descKey: "main.activation.step3Desc" }
             ].map((item, index) => (
               <div key={index} className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-primary text-white rounded-full text-xl font-bold mb-3">
                   {item.step}
                 </div>
-                <h3 className="font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <h3 className="font-semibold mb-2">{t(item.titleKey)}</h3>
+                <p className="text-sm text-muted-foreground">{t(item.descKey)}</p>
               </div>
             ))}
           </div>
