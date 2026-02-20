@@ -1,232 +1,133 @@
 
+# Page dédiée au formulaire d'activation (Checkout)
 
-# Multilingual Support (EN/FR) Implementation Plan
+## Problème identifié
 
-## Overview
+Actuellement dans `src/pages/Index.tsx`, le clic sur "Choisir ce plan" :
+1. Appelle `setSelectedPlan()` pour stocker le plan
+2. Tente de scroller vers `#activation` — mais cette section n'est montée dans le DOM qu'**après** le `setState`, donc le scroll échoue
+3. Affiche un simple toast "Plan sélectionné" qui ne guide pas l'utilisateur
 
-This plan implements a complete internationalization (i18n) system for the IPTV EXPRESS website, with:
-- **English as the default language** on the Pre-Landing page
-- **Language persistence** via localStorage so the selected language carries over to the main site
-- **Language switcher** component in the Pre-Landing navbar
+Le formulaire `ActivationForm` est monté conditionnellement avec `{selectedPlan && <ActivationForm />}`, rendant la navigation impossible.
 
-## Architecture
+## Solution : Page `/checkout` dédiée
 
-### State Management Approach
+Créer une page autonome `/checkout` qui affiche exclusivement le formulaire d'activation. Quand le visiteur clique sur "Choisir ce plan", il est **navigué vers cette nouvelle page** avec les informations du plan passées via le `state` de React Router (pas de query params visibles dans l'URL).
 
-We'll use React Context to manage language state globally across the application. This is lightweight and doesn't require additional dependencies.
+## Flux utilisateur
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                     LanguageContext                              │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │  language   │  │ setLanguage │  │  t() translation func   │  │
-│  │  ('en'/'fr')│  │  function   │  │  returns translated text│  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-        ┌──────────┐   ┌──────────┐   ┌──────────┐
-        │PreLanding│   │  Index   │   │Components│
-        │   Page   │   │  Page    │   │   ...    │
-        └──────────┘   └──────────┘   └──────────┘
+Page /home#pricing
+  → Visiteur clique "Choisir ce plan"
+    → navigate('/checkout', { state: { planId, planName, price } })
+      → Page /checkout s'affiche avec formulaire pré-rempli
+        → Formulaire soumis → Modal de paiement (NOWPayments)
+          → Bouton "Retour aux plans" pour revenir à /home#pricing
 ```
 
-## Files to Create
+## Fichiers à créer
 
-### 1. Translation Files
+### `src/pages/Checkout.tsx` (nouvelle page)
 
-**`src/i18n/translations/en.ts`** - English translations
+Page dédiée avec :
+- Header minimaliste avec logo "IPTV EXPRESS" et bouton retour
+- Résumé du plan sélectionné (nom, durée, prix) en haut de page, bien visible
+- Formulaire `ActivationForm` en dessous
+- Si aucun plan n'est passé via le state (accès direct à `/checkout`), redirection automatique vers `/home#pricing`
+- Fond sombre cohérent avec le reste du site
 
-Contains all text strings for:
-- Pre-Landing page (Hero, Comparison, Features, Reviews, FAQ, CTA, Footer)
-- Main site (Hero, Features, Pricing, Testimonials, FAQ, Contact, Footer, Activation Form)
-
-**`src/i18n/translations/fr.ts`** - French translations
-
-Same structure with French text (current content).
-
-**`src/i18n/index.ts`** - Translation utility
-
-Exports the `translations` object and type definitions.
-
-### 2. Language Context
-
-**`src/contexts/LanguageContext.tsx`**
-
-```typescript
-// Provides:
-// - language: 'en' | 'fr' (default: 'en')
-// - setLanguage: function to change language
-// - t: function to get translated text by key
-// - Persists language choice to localStorage
-// - Reads from localStorage on mount
+### Structure de la page Checkout :
+```text
+┌─────────────────────────────────────────────┐
+│  ← Retour aux plans         IPTV EXPRESS    │
+├─────────────────────────────────────────────┤
+│                                             │
+│  📦 Plan sélectionné                        │
+│  ┌─────────────────────────────────────┐   │
+│  │ Premium (12 mois)        $60        │   │
+│  │ ✓ 15,000+ chaînes live              │   │
+│  │ ✓ 4K Ultra HD...                    │   │
+│  └─────────────────────────────────────┘   │
+│                                             │
+│  📝 Formulaire d'activation                 │
+│  [Email] [Confirm Email] [Device] [Submit]  │
+│                                             │
+└─────────────────────────────────────────────┘
 ```
 
-### 3. Language Switcher Component
+## Fichiers à modifier
 
-**`src/components/LanguageSwitcher.tsx`**
-
-- Dropdown or toggle buttons showing EN / FR
-- Flag icons or text indicators
-- Updates context on selection
-- Styled to match the dark theme with glassmorphism
-
-### 4. Custom Hook
-
-**`src/hooks/useLanguage.ts`**
-
-Simple hook to access language context:
+### `src/App.tsx`
+Ajouter la nouvelle route `/checkout` :
 ```typescript
-export const useLanguage = () => useContext(LanguageContext);
+import Checkout from "./pages/Checkout";
+// ...
+<Route path="/checkout" element={<Checkout />} />
 ```
 
-## Files to Modify
-
-### Pre-Landing Components (9 files)
-
-| Component | Changes |
-|-----------|---------|
-| `StickyNavbar.tsx` | Add LanguageSwitcher, translate nav links |
-| `PrelandingHero.tsx` | Translate headline, sub-headline, CTA |
-| `ComparisonSection.tsx` | Translate "Old Cable" vs "IPTV EXPRESS" items |
-| `FeaturesGrid.tsx` | Translate feature titles and descriptions |
-| `DeviceBanner.tsx` | Translate device labels and section text |
-| `ReviewsSection.tsx` | Translate section title and review content |
-| `PrelandingFAQ.tsx` | Translate all FAQ questions and answers |
-| `FinalCTA.tsx` | Translate "Ready to switch?" and CTA button |
-| `PrelandingFooter.tsx` | Translate footer links and copyright |
-
-### Main Site Components (8 files)
-
-| Component | Changes |
-|-----------|---------|
-| `HeroSection.tsx` | Translate headline, description, buttons |
-| `FeaturesSection.tsx` | Translate all 8 features |
-| `PricingSection.tsx` | Translate plan names, features, badges |
-| `TestimonialsSection.tsx` | Translate section title and testimonials |
-| `FAQSection.tsx` | Translate all 10 FAQ items |
-| `ContactSection.tsx` | Translate form labels, placeholders, buttons |
-| `ActivationForm.tsx` | Translate all form content |
-| `Footer.tsx` | Translate all footer content |
-
-### App Configuration
-
-**`src/App.tsx`**
-
-- Wrap entire app with `LanguageProvider`
-
-## Translation Keys Structure
-
+### `src/pages/Index.tsx`
+Modifier `handleSelectPlan` pour naviguer vers `/checkout` au lieu de scroller :
 ```typescript
-{
-  // Common
-  common: {
-    getStarted: "Get Started",
-    learnMore: "Learn More",
-    // ...
-  },
-  
-  // Pre-Landing
-  prelanding: {
-    hero: {
-      headline: "Stop Overpaying for Cable TV...",
-      subheadline: "Enjoy 10,000+ Channels...",
-      cta: "Check Availability & Price"
-    },
-    comparison: {
-      title: "Why Make the Switch?",
-      oldCable: ["Expensive monthly bills", ...],
-      iptvExpress: ["Affordable pricing", ...]
-    },
-    features: { ... },
-    reviews: { ... },
-    faq: { ... }
-  },
-  
-  // Main Site
-  main: {
-    hero: { ... },
-    features: { ... },
-    pricing: { ... },
-    testimonials: { ... },
-    faq: { ... },
-    contact: { ... },
-    activation: { ... },
-    footer: { ... }
-  }
-}
-```
+import { useNavigate } from "react-router-dom";
 
-## Implementation Details
+const navigate = useNavigate();
 
-### Language Persistence Flow
-
-1. User visits `/prelanding` → defaults to English
-2. User clicks language switcher → updates context & localStorage
-3. User clicks CTA → navigates to `/#pricing`
-4. Main site reads language from context (which loaded from localStorage)
-5. All components render in selected language
-
-### Default Language Logic
-
-```typescript
-const getInitialLanguage = (): 'en' | 'fr' => {
-  // Check localStorage first
-  const saved = localStorage.getItem('language');
-  if (saved === 'en' || saved === 'fr') return saved;
-  
-  // Default to English for prelanding
-  return 'en';
+const handleSelectPlan = (planId: string, price: number) => {
+  navigate('/checkout', {
+    state: {
+      planId,
+      planName: getPlanName(planId),
+      price
+    }
+  });
 };
 ```
+Supprimer le toast "Plan sélectionné" et la logique de scroll obsolète.
+Retirer `{selectedPlan && <ActivationForm />}` du JSX (le formulaire vit maintenant dans sa propre page).
+Retirer les states `selectedPlan`, `nowPayment` et `cryptoModal` de `Index.tsx` (ils migrent vers `Checkout.tsx`).
 
-### Translation Function Usage
+### `src/components/ActivationForm.tsx`
+Légère modification : ajouter un prop optionnel `onNavigateBack` pour le bouton "Changer de plan", qui navigue vers `/home#pricing` au lieu de tenter un scroll interne. Toute la logique de paiement reste dans le composant.
 
+## Détails techniques
+
+### Passage du plan via React Router state
 ```typescript
-// In components:
-const { t } = useLanguage();
+// Dans Index.tsx - navigation
+navigate('/checkout', {
+  state: { planId: '12months', planName: 'Premium (12 mois)', price: 60 }
+});
 
-// Usage:
-<h1>{t('prelanding.hero.headline')}</h1>
-<Button>{t('common.getStarted')}</Button>
+// Dans Checkout.tsx - lecture
+import { useLocation, useNavigate } from 'react-router-dom';
+const location = useLocation();
+const selectedPlan = location.state as { planId: string; planName: string; price: number } | null;
+
+// Redirection si accès direct sans plan
+useEffect(() => {
+  if (!selectedPlan) navigate('/home#pricing', { replace: true });
+}, []);
 ```
 
-## File Summary
+### Gestion du NOWPaymentModal
+Le state `nowPayment` et le composant `<NOWPaymentModal>` seront déplacés dans `Checkout.tsx`, puisque c'est là que le paiement est initié.
 
-| Action | File Path |
-|--------|-----------|
-| Create | `src/i18n/translations/en.ts` |
-| Create | `src/i18n/translations/fr.ts` |
-| Create | `src/i18n/index.ts` |
-| Create | `src/contexts/LanguageContext.tsx` |
-| Create | `src/components/LanguageSwitcher.tsx` |
-| Create | `src/hooks/useLanguage.ts` |
-| Modify | `src/App.tsx` |
-| Modify | `src/components/prelanding/StickyNavbar.tsx` |
-| Modify | `src/components/prelanding/PrelandingHero.tsx` |
-| Modify | `src/components/prelanding/ComparisonSection.tsx` |
-| Modify | `src/components/prelanding/FeaturesGrid.tsx` |
-| Modify | `src/components/prelanding/DeviceBanner.tsx` |
-| Modify | `src/components/prelanding/ReviewsSection.tsx` |
-| Modify | `src/components/prelanding/PrelandingFAQ.tsx` |
-| Modify | `src/components/prelanding/FinalCTA.tsx` |
-| Modify | `src/components/prelanding/PrelandingFooter.tsx` |
-| Modify | `src/components/HeroSection.tsx` |
-| Modify | `src/components/FeaturesSection.tsx` |
-| Modify | `src/components/PricingSection.tsx` |
-| Modify | `src/components/TestimonialsSection.tsx` |
-| Modify | `src/components/FAQSection.tsx` |
-| Modify | `src/components/ContactSection.tsx` |
-| Modify | `src/components/ActivationForm.tsx` |
-| Modify | `src/components/Footer.tsx` |
+### Traductions
+Les textes de la page Checkout utilisent les clés déjà existantes dans `src/i18n/translations/en.ts` et `fr.ts` (section `main.activation.*`) — aucune nouvelle clé nécessaire.
 
-## Technical Notes
+## Résumé des fichiers
 
-- **No external dependencies** required (no react-i18next or similar)
-- Uses React Context for state management
-- localStorage for persistence across sessions
-- TypeScript types ensure type-safe translations
-- Fallback to key if translation missing (development safety)
-- Mobile-friendly language switcher with touch targets
+| Fichier | Action | Description |
+|---------|--------|-------------|
+| `src/pages/Checkout.tsx` | Créer | Nouvelle page dédiée au checkout |
+| `src/App.tsx` | Modifier | Ajouter route `/checkout` |
+| `src/pages/Index.tsx` | Modifier | Remplacer scroll par `navigate('/checkout')`, nettoyer les states obsolètes |
+| `src/components/ActivationForm.tsx` | Modifier mineure | Adapter le bouton "Changer de plan" pour naviguer vers `/home#pricing` |
 
+## Avantages de cette approche
+
+- UX claire : le visiteur voit immédiatement le formulaire sur une page dédiée
+- URL partageable (`/checkout`) même si le state est perdu à l'actualisation (redirection automatique)
+- Séparation des responsabilités : `Index.tsx` affiche le catalogue, `Checkout.tsx` gère le paiement
+- Compatible avec le système i18n existant (aucune clé à ajouter)
+- Compatible mobile : pas de problème de scroll sur petits écrans
