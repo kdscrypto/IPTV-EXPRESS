@@ -8,7 +8,7 @@ const FinalCTA = () => {
   const { t } = useLanguage();
 
   const goToPricing = () => {
-    navigate("/#pricing");
+    navigate("/home#pricing");
     setTimeout(() => {
       const pricingSection = document.getElementById("pricing");
       pricingSection?.scrollIntoView({ behavior: "smooth" });
