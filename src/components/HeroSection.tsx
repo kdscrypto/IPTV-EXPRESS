@@ -1,5 +1,5 @@
 import { PlayCircle } from "lucide-react";
-import heroImage from "@/assets/hero-image.jpg";
+import DynamicBackground from "@/components/DynamicBackground";
 
 const HeroSection = () => {
   const scrollToPricing = () => {
@@ -12,19 +12,15 @@ const HeroSection = () => {
       id="hero"
       className="relative min-h-screen flex items-end overflow-hidden"
     >
-      {/* Background Image */}
-      <img
-        src={heroImage}
-        alt="Family watching IPTV on a smart TV"
-        className="absolute inset-0 w-full h-full object-cover object-center"
-      />
+      {/* Dynamic TMDB Background */}
+      <DynamicBackground />
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
+      {/* Left-to-right overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 z-[1]" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 pb-24 pt-32">
+      <div className="relative z-10 container mx-auto px-6 pb-24 pt-32" style={{ zIndex: 10 }}>
         <div className="max-w-2xl">
           {/* Badge */}
           <div className="flex items-center gap-2 mb-6">
