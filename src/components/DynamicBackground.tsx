@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Play, Calendar, Tag, Zap } from 'lucide-react';
+import { Play, Calendar, Tag, Zap } from 'lucide-react';
 import { useMediaContent } from '@/hooks/useMediaContent';
 
 interface DynamicBackgroundProps {
@@ -153,45 +153,25 @@ const DynamicBackground = ({ className = '' }: DynamicBackgroundProps) => {
         </div>
       </div>
 
-      {/* Navigation Controls */}
+      {/* Pagination Indicators */}
       {content.length > 1 && (
-        <>
-          {/* Previous/Next Buttons */}
-          <button
-            onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full glass hover:bg-foreground/10 transition-smooth group"
-            aria-label="Contenu précédent"
-          >
-            <ChevronLeft className="w-6 h-6 text-foreground group-hover:text-primary transition-colors" />
-          </button>
-
-          <button
-            onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full glass hover:bg-foreground/10 transition-smooth group"
-            aria-label="Contenu suivant"
-          >
-            <ChevronRight className="w-6 h-6 text-foreground group-hover:text-primary transition-colors" />
-          </button>
-
-          {/* Pagination Indicators */}
-          <div className="absolute bottom-6 right-6 z-20 flex gap-2">
-            {content.slice(0, 5).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-2 h-2 rounded-full transition-smooth ${
-                  index === currentIndex
-                    ? 'bg-primary scale-125'
-                    : 'bg-foreground/30 hover:bg-foreground/50'
-                }`}
-                aria-label={`Aller au contenu ${index + 1}`}
-              />
-            ))}
-            {content.length > 5 && (
-              <div className="w-2 h-2 rounded-full bg-foreground/20" />
-            )}
-          </div>
-        </>
+        <div className="absolute bottom-6 right-6 z-20 flex gap-2">
+          {content.slice(0, 5).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2 h-2 rounded-full transition-smooth ${
+                index === currentIndex
+                  ? 'bg-primary scale-125'
+                  : 'bg-foreground/30 hover:bg-foreground/50'
+              }`}
+              aria-label={`Aller au contenu ${index + 1}`}
+            />
+          ))}
+          {content.length > 5 && (
+            <div className="w-2 h-2 rounded-full bg-foreground/20" />
+          )}
+        </div>
       )}
 
       {/* Auto-play Indicator */}
