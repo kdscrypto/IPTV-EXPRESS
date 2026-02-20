@@ -46,29 +46,6 @@ const HeroSection = () => {
             Compatible with all your favorite devices.
           </p>
 
-          {/* CTA Button */}
-          <button
-            onClick={scrollToPricing}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/30"
-          >
-            Get Started Now
-            <PlayCircle className="w-5 h-5" />
-          </button>
-
-          {/* Trust Badges */}
-          <div className="mt-8 flex flex-wrap gap-4 text-sm text-white/60">
-            <span className="flex items-center gap-1">
-              <span className="text-primary font-bold">✓</span> 4K Ultra HD
-            </span>
-            <span className="text-white/30">|</span>
-            <span className="flex items-center gap-1">
-              <span className="text-primary font-bold">✓</span> No Buffering
-            </span>
-            <span className="text-white/30">|</span>
-            <span className="flex items-center gap-1">
-              <span className="text-primary font-bold">✓</span> 50,000+ customers worldwide
-            </span>
-          </div>
         </div>
       </div>
     </section>
