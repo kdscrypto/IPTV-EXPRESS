@@ -43,6 +43,15 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated, onNavigat
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'crypto' | 'whatsapp'>('crypto');
+  const [selectedCrypto, setSelectedCrypto] = useState<string>('btc');
+
+  const cryptoOptions = [
+    { value: 'btc', label: 'Bitcoin', symbol: 'BTC', icon: '₿', type: 'volatile' },
+    { value: 'usdttrc20', label: 'USDT (TRC20)', symbol: 'USDT', icon: '₮', type: 'stable' },
+    { value: 'usdte', label: 'USDT (ERC20)', symbol: 'USDT', icon: '₮', type: 'stable' },
+    { value: 'usdc', label: 'USD Coin', symbol: 'USDC', icon: '$', type: 'stable' },
+    { value: 'ltc', label: 'Litecoin', symbol: 'LTC', icon: 'Ł', type: 'volatile' },
+  ];
 
   const deviceOptions = [
     { value: 'smart-tv', labelKey: 'main.activation.smartTv', icon: Tv },
@@ -88,6 +97,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated, onNavigat
             email: formData.email,
             device: formData.device,
             deviceInfo: formData.deviceInfo,
+            payCurrency: selectedCrypto,
           }
         });
 
@@ -257,7 +267,7 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated, onNavigat
                         <span className="text-xs text-muted-foreground text-center">
                           {t("main.activation.cryptoDescription")}
                         </span>
-                        <Badge variant="secondary" className="bg-green-500/20 text-green-700 dark:text-green-300">
+                        <Badge variant="secondary" className="bg-primary/20 text-primary">
                           {t("main.activation.recommended")}
                         </Badge>
                       </div>
@@ -283,7 +293,57 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated, onNavigat
                   </div>
                 </div>
 
-                {/* Email */}
+                {/* Crypto Currency Selector — visible only when crypto is selected */}
+                {paymentMethod === 'crypto' && (
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold">
+                      {t("main.activation.cryptoSelector")}
+                    </Label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {cryptoOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setSelectedCrypto(option.value)}
+                          className={`p-3 rounded-lg border-2 transition-all text-left ${
+                            selectedCrypto === option.value
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border hover:border-primary/40'
+                          }`}
+                        >
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xl">{option.icon}</span>
+                              <Badge
+                                className={
+                                  option.type === 'stable'
+                                    ? 'text-[10px] px-1.5 py-0 bg-green-500/20 text-green-700 dark:text-green-300 border-green-500/30'
+                                    : 'text-[10px] px-1.5 py-0 bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30'
+                                }
+                                variant="outline"
+                              >
+                                {option.type === 'stable' ? t("main.activation.stablecoin") : t("main.activation.cryptoBadge")}
+                              </Badge>
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold leading-tight">{option.symbol}</p>
+                              <p className="text-[11px] text-muted-foreground leading-tight">{option.label}</p>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                    {/* Stablecoin info note */}
+                    <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                      <span className="text-sm">ℹ️</span>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {t("main.activation.stablecoinNote")}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-base font-semibold flex items-center gap-2">
                     <Mail className="w-4 h-4 text-primary" />

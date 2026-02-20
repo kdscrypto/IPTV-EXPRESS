@@ -419,6 +419,10 @@ export const fr: TranslationKeys = {
       requestTransferred: "Votre demande est automatiquement transférée à notre support.",
       error: "Erreur",
       tryAgain: "Une erreur est survenue. Veuillez réessayer.",
+      cryptoSelector: "Sélectionnez votre devise de paiement",
+      stablecoin: "Stablecoin",
+      cryptoBadge: "Crypto",
+      stablecoinNote: "Prix fixe — aucun risque de change",
     },
     footer: {
       description: "Le leader français de l'IPTV express avec plus de 15 000 chaînes et 80 000 contenus VOD. Qualité 4K, support 24/7.",
