@@ -20,7 +20,7 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 z-[1]" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 pb-24 pt-32" style={{ zIndex: 10 }}>
+      <div className="relative z-10 container mx-auto px-6 pb-52 pt-32" style={{ zIndex: 10 }}>
         <div className="max-w-2xl">
           {/* Badge */}
           <div className="flex items-center gap-2 mb-6">
