@@ -1,133 +1,134 @@
 
-# Page dédiée au formulaire d'activation (Checkout)
+# Ajout du choix de stablecoin pour les paiements crypto
 
 ## Problème identifié
 
-Actuellement dans `src/pages/Index.tsx`, le clic sur "Choisir ce plan" :
-1. Appelle `setSelectedPlan()` pour stocker le plan
-2. Tente de scroller vers `#activation` — mais cette section n'est montée dans le DOM qu'**après** le `setState`, donc le scroll échoue
-3. Affiche un simple toast "Plan sélectionné" qui ne guide pas l'utilisateur
+Actuellement, dans `supabase/functions/create-payment/index.ts`, la devise de paiement est codée en dur :
+```typescript
+pay_currency: 'btc', // Default to BTC, user can change on payment page
+```
+L'utilisateur n'a **aucun moyen** de choisir une autre devise avant de lancer le paiement. La modal `NOWPaymentModal` affiche simplement l'adresse BTC générée.
 
-Le formulaire `ActivationForm` est monté conditionnellement avec `{selectedPlan && <ActivationForm />}`, rendant la navigation impossible.
+## Solution
 
-## Solution : Page `/checkout` dédiée
+Ajouter un **sélecteur de crypto-devise** dans `ActivationForm.tsx`, visible uniquement quand le mode "crypto" est sélectionné. L'utilisateur choisit sa devise **avant** de soumettre le formulaire. Cette devise est ensuite transmise à l'edge function qui la passe à NOWPayments.
 
-Créer une page autonome `/checkout` qui affiche exclusivement le formulaire d'activation. Quand le visiteur clique sur "Choisir ce plan", il est **navigué vers cette nouvelle page** avec les informations du plan passées via le `state` de React Router (pas de query params visibles dans l'URL).
+## Devises proposées
+
+| Devise | Symbole | Type |
+|--------|---------|------|
+| Bitcoin | BTC | Crypto volatile |
+| USDT (TRC20) | USDTTRC20 | Stablecoin |
+| USDT (ERC20) | USDTE | Stablecoin |
+| USDC | USDC | Stablecoin |
+| LTC | LTC | Crypto alternatif |
+
+Les stablecoins (USDT, USDC) sont particulièrement utiles car leur valeur est indexée sur le dollar, évitant les fluctuations de cours entre le moment du choix et le paiement.
 
 ## Flux utilisateur
 
 ```text
-Page /home#pricing
-  → Visiteur clique "Choisir ce plan"
-    → navigate('/checkout', { state: { planId, planName, price } })
-      → Page /checkout s'affiche avec formulaire pré-rempli
-        → Formulaire soumis → Modal de paiement (NOWPayments)
-          → Bouton "Retour aux plans" pour revenir à /home#pricing
-```
-
-## Fichiers à créer
-
-### `src/pages/Checkout.tsx` (nouvelle page)
-
-Page dédiée avec :
-- Header minimaliste avec logo "IPTV EXPRESS" et bouton retour
-- Résumé du plan sélectionné (nom, durée, prix) en haut de page, bien visible
-- Formulaire `ActivationForm` en dessous
-- Si aucun plan n'est passé via le state (accès direct à `/checkout`), redirection automatique vers `/home#pricing`
-- Fond sombre cohérent avec le reste du site
-
-### Structure de la page Checkout :
-```text
-┌─────────────────────────────────────────────┐
-│  ← Retour aux plans         IPTV EXPRESS    │
-├─────────────────────────────────────────────┤
-│                                             │
-│  📦 Plan sélectionné                        │
-│  ┌─────────────────────────────────────┐   │
-│  │ Premium (12 mois)        $60        │   │
-│  │ ✓ 15,000+ chaînes live              │   │
-│  │ ✓ 4K Ultra HD...                    │   │
-│  └─────────────────────────────────────┘   │
-│                                             │
-│  📝 Formulaire d'activation                 │
-│  [Email] [Confirm Email] [Device] [Submit]  │
-│                                             │
-└─────────────────────────────────────────────┘
+ActivationForm → Choisit "Paiement Crypto"
+  → Sélecteur de devise apparaît (BTC / USDT TRC20 / USDT ERC20 / USDC / LTC)
+    → Soumet le formulaire avec la devise choisie
+      → Edge function crée le paiement NOWPayments avec la bonne devise
+        → NOWPaymentModal affiche l'adresse correcte pour la devise choisie
 ```
 
 ## Fichiers à modifier
 
-### `src/App.tsx`
-Ajouter la nouvelle route `/checkout` :
+### 1. `src/components/ActivationForm.tsx`
+
+Ajouter un state `selectedCrypto` (défaut: `'btc'`) et un sélecteur visuel avec des badges/boutons pour chaque devise, affiché uniquement quand `paymentMethod === 'crypto'`.
+
 ```typescript
-import Checkout from "./pages/Checkout";
-// ...
-<Route path="/checkout" element={<Checkout />} />
+const [selectedCrypto, setSelectedCrypto] = useState<string>('btc');
+
+const cryptoOptions = [
+  { value: 'btc', label: 'Bitcoin', symbol: 'BTC', icon: '₿', type: 'volatile' },
+  { value: 'usdttrc20', label: 'USDT (TRC20)', symbol: 'USDT', icon: '₮', type: 'stable' },
+  { value: 'usdte', label: 'USDT (ERC20)', symbol: 'USDT', icon: '₮', type: 'stable' },
+  { value: 'usdc', label: 'USD Coin', symbol: 'USDC', icon: '$', type: 'stable' },
+  { value: 'ltc', label: 'Litecoin', symbol: 'LTC', icon: 'Ł', type: 'volatile' },
+];
 ```
 
-### `src/pages/Index.tsx`
-Modifier `handleSelectPlan` pour naviguer vers `/checkout` au lieu de scroller :
+Le sélecteur se présentera sous forme de grille de boutons avec :
+- Nom et symbole de la devise
+- Badge "Stablecoin" en vert pour USDT et USDC (prix fixe en USD)
+- Badge "Crypto" en orange pour BTC et LTC
+- Mise en évidence visuelle de la devise sélectionnée
+
+La devise est passée dans l'appel à l'edge function :
 ```typescript
-import { useNavigate } from "react-router-dom";
-
-const navigate = useNavigate();
-
-const handleSelectPlan = (planId: string, price: number) => {
-  navigate('/checkout', {
-    state: {
-      planId,
-      planName: getPlanName(planId),
-      price
-    }
-  });
-};
-```
-Supprimer le toast "Plan sélectionné" et la logique de scroll obsolète.
-Retirer `{selectedPlan && <ActivationForm />}` du JSX (le formulaire vit maintenant dans sa propre page).
-Retirer les states `selectedPlan`, `nowPayment` et `cryptoModal` de `Index.tsx` (ils migrent vers `Checkout.tsx`).
-
-### `src/components/ActivationForm.tsx`
-Légère modification : ajouter un prop optionnel `onNavigateBack` pour le bouton "Changer de plan", qui navigue vers `/home#pricing` au lieu de tenter un scroll interne. Toute la logique de paiement reste dans le composant.
-
-## Détails techniques
-
-### Passage du plan via React Router state
-```typescript
-// Dans Index.tsx - navigation
-navigate('/checkout', {
-  state: { planId: '12months', planName: 'Premium (12 mois)', price: 60 }
-});
-
-// Dans Checkout.tsx - lecture
-import { useLocation, useNavigate } from 'react-router-dom';
-const location = useLocation();
-const selectedPlan = location.state as { planId: string; planName: string; price: number } | null;
-
-// Redirection si accès direct sans plan
-useEffect(() => {
-  if (!selectedPlan) navigate('/home#pricing', { replace: true });
-}, []);
+body: {
+  ...
+  payCurrency: selectedCrypto,  // nouveau champ
+}
 ```
 
-### Gestion du NOWPaymentModal
-Le state `nowPayment` et le composant `<NOWPaymentModal>` seront déplacés dans `Checkout.tsx`, puisque c'est là que le paiement est initié.
+### 2. `supabase/functions/create-payment/index.ts`
 
-### Traductions
-Les textes de la page Checkout utilisent les clés déjà existantes dans `src/i18n/translations/en.ts` et `fr.ts` (section `main.activation.*`) — aucune nouvelle clé nécessaire.
+- Ajouter `payCurrency` à l'interface `PaymentRequest`
+- Valider que la devise est dans la liste des devises acceptées
+- Remplacer `pay_currency: 'btc'` par `pay_currency: payCurrency`
+
+```typescript
+interface PaymentRequest {
+  ...
+  payCurrency?: string;
+}
+
+const validCurrencies = ['btc', 'usdttrc20', 'usdte', 'usdc', 'ltc'];
+const payCurrency = requestBody.payCurrency && validCurrencies.includes(requestBody.payCurrency.toLowerCase())
+  ? requestBody.payCurrency.toLowerCase()
+  : 'btc'; // fallback BTC si invalide
+```
+
+### 3. `src/i18n/translations/en.ts` et `fr.ts`
+
+Ajouter les clés de traduction pour le sélecteur de devise :
+```typescript
+cryptoSelector: "Select your payment currency",
+stablecoin: "Stablecoin",
+stablecoinNote: "Fixed price — no exchange rate risk",
+```
+
+## Interface du sélecteur (aperçu)
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│  Select your payment currency                            │
+│                                                         │
+│  ┌──────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │  ₿ BTC   │  │  ₮ USDT     │  │  ₮ USDT      │     │
+│  │  Bitcoin │  │  TRC20      │  │  ERC20       │     │
+│  │  [Crypto]│  │ [Stablecoin]│  │ [Stablecoin] │     │
+│  └──────────┘  └──────────────┘  └──────────────┘     │
+│                                                         │
+│  ┌──────────┐  ┌──────────┐                            │
+│  │  $ USDC  │  │  Ł LTC   │                            │
+│  │  USD Coin│  │ Litecoin │                            │
+│  │[Stablecoin] │  [Crypto]│                            │
+│  └──────────┘  └──────────┘                            │
+│                                                         │
+│  ℹ️ Stablecoins are pegged to the USD — no price       │
+│     fluctuation risk between selection and payment.    │
+└─────────────────────────────────────────────────────────┘
+```
 
 ## Résumé des fichiers
 
 | Fichier | Action | Description |
 |---------|--------|-------------|
-| `src/pages/Checkout.tsx` | Créer | Nouvelle page dédiée au checkout |
-| `src/App.tsx` | Modifier | Ajouter route `/checkout` |
-| `src/pages/Index.tsx` | Modifier | Remplacer scroll par `navigate('/checkout')`, nettoyer les states obsolètes |
-| `src/components/ActivationForm.tsx` | Modifier mineure | Adapter le bouton "Changer de plan" pour naviguer vers `/home#pricing` |
+| `src/components/ActivationForm.tsx` | Modifier | Ajouter sélecteur de devise crypto |
+| `supabase/functions/create-payment/index.ts` | Modifier | Accepter et utiliser `payCurrency` |
+| `src/i18n/translations/en.ts` | Modifier | Ajouter clés pour sélecteur de devise |
+| `src/i18n/translations/fr.ts` | Modifier | Ajouter clés en français |
 
-## Avantages de cette approche
+## Notes techniques
 
-- UX claire : le visiteur voit immédiatement le formulaire sur une page dédiée
-- URL partageable (`/checkout`) même si le state est perdu à l'actualisation (redirection automatique)
-- Séparation des responsabilités : `Index.tsx` affiche le catalogue, `Checkout.tsx` gère le paiement
-- Compatible avec le système i18n existant (aucune clé à ajouter)
-- Compatible mobile : pas de problème de scroll sur petits écrans
+- L'edge function est re-déployée après modification
+- Le fallback `btc` garantit la compatibilité si la devise n'est pas fournie
+- Les codes devise NOWPayments sont sensibles à la casse (minuscules) — validation côté serveur incluse
+- Aucune migration de base de données nécessaire (la colonne `pay_currency` existe déjà dans `orders`)
