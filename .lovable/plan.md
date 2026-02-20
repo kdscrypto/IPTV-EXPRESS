@@ -1,136 +1,135 @@
 
-# Refonte de la PreLanding Page selon le design Stitch
+# Refonte de la page /home selon le design Stitch
 
-## Analyse comparative
+## Analyse comparative du design Stitch vs. l'état actuel
 
-Le design Stitch apporte des changements visuels et structurels importants par rapport à la version actuelle :
+En examinant l'image de référence Stitch et le code actuel, voici les différences identifiées section par section :
 
 | Section | Actuel | Design Stitch |
 |---------|--------|---------------|
-| Hero | Texte centré, fond abstrait | Layout 2 colonnes : texte gauche + image famille droite |
-| Features | Grille 4 colonnes avec icônes | Grille 2x2 avec icônes dans des cartes plus larges |
-| Devices | Icônes simples horizontales | 3 cartes avec aperçus visuels (captures d'écran) |
-| Reviews | Grille 3 colonnes statique | Slider/carrousel 1 avis à la fois avec flèches |
-| CTA Final | Fond gradient subtil | Bannière vert vif avec `bg-primary` dominant |
-| Footer | Simple ligne | 2 colonnes : logo+liens + copyright+langue |
+| Navbar | Absente sur /home | Navbar fixe avec logo, liens (Home, About, Community, Supports, Contact), boutons Log in + Sign up vert |
+| Hero | Fond abstrait avec texte + DynamicBackground | Plein écran avec image de fond (famille sur canapé + TV), titre "IPTV Express" en vert/blanc, sous-titre, CTA "Get Started Now" |
+| Features | 8 features en grille 4 colonnes avec cartes glass | 8 features en grille 4×2 avec icônes vert et fond foncé, titre centré "Premium Features" |
+| Pricing | 4 cartes en grille 3 colonnes (1month ne s'affiche pas) | 4 cartes en grille 4 colonnes compactes, "MOST POPULAR" badge, prix barrés, fond sombre cohérent |
+| Testimonials | Grille 3 colonnes statique | 2 colonnes : colonne gauche = 2 avis empilés, colonne droite = FAQ accordion |
+| Contact | Grand formulaire 3 colonnes | 2 colonnes : gauche = 3 méthodes (Live Chat, Email, Phone), droite = formulaire compact |
+| Footer | Très détaillé, 4 colonnes | Minimaliste : logo + icônes paiement à droite, liens légaux + réseaux sociaux en bas |
 
 ## Fichiers à modifier
 
-### 1. `src/components/prelanding/PrelandingHero.tsx`
+### 1. Nouveau composant : `src/components/HomeNavbar.tsx` (à créer)
 
-**Changement majeur** : passer du layout centré au layout 2 colonnes.
+Navbar fixe en haut de la page `/home` (absente actuellement) avec :
+- Logo "IPTV Express" avec icône verte à gauche
+- Liens de navigation centraux : Home | About | Community | Supports | Contact (liens de scroll internes)
+- À droite : bouton "Log in" (outline) + bouton "Sign up" (vert arrondi, pointe vers `#pricing`)
+- Fond `bg-black/90 backdrop-blur` fixe
+- Version mobile : hamburger menu
 
-- Colonne gauche (texte) :
-  - Headline en blanc : "Stop Overpaying for Cable TV." + sous-titre vert : "Get Unlimited Access Today."
-  - Sous-texte : "Enjoy 10,000+ Channels, Premium Sports & Movies in Crystal Clear 4K — Starting at Just $9.98/month."
-  - Bouton CTA : "Get Started →" avec style vert arrondi
-  - Badges en bas : "4K Ultra HD | No Buffering | ✓ Trusted by 50,000+ cord-cutters worldwide"
-- Colonne droite (image) :
-  - Grande image de famille regardant la TV (utiliser une image Unsplash ou placeholder avec overlay foncé)
-  - L'image prend environ 50% de la largeur en desktop, pleine largeur sur mobile (empilé)
+### 2. `src/components/HeroSection.tsx`
 
-Structure HTML approximative :
-```
-<section className="min-h-screen bg-black grid md:grid-cols-2">
-  <div> {/* texte */} </div>
-  <div> {/* image avec overlay */} </div>
-</section>
-```
+Refonte complète du Hero :
+- Section plein écran (`min-h-screen`) avec image de fond sombre (famille + TV)
+- Utiliser l'image `src/assets/hero-image.jpg` déjà présente en fond full-bleed
+- Overlay gradient sombre `from-black/80 via-black/50 to-transparent`
+- Contenu aligné à gauche dans la partie inférieure-gauche :
+  - Logo/titre "IPTV Express" grand, avec l'icône play en vert
+  - Sous-titre : "Access over 15,000 Channels and 80,000 VOD in 4K quality. Compatible with all your favorite devices."
+  - Bouton CTA vert arrondi "Get Started Now" scrollant vers `#pricing`
+- Supprimer `DynamicBackground`, les éléments flottants et le `DemoModal`
 
-Pour l'image : utiliser l'image hero existante dans `src/assets/hero-image.jpg` ou un placeholder sombre. L'image doit avoir un overlay gradient sombre à gauche pour fondre avec le texte.
+### 3. `src/components/FeaturesSection.tsx`
 
-### 2. `src/components/prelanding/FeaturesGrid.tsx`
+Adapter au design Stitch :
+- Titre "Premium Features" centré simple (sans sous-titre verbeux)
+- Grille `grid-cols-2 md:grid-cols-4` pour afficher 8 icônes en 2 rangées × 4 colonnes
+- Chaque carte : fond `bg-zinc-900/80` avec bordure subtile, icône vert dans carré centré en haut, titre en dessous, sans description verbose
+- Les 8 features actuelles sont parfaites pour le design (15,000+ Channels, 80,000+ VOD, 4K/HD, Multi-language, All Devices, Secure Connection, 24/7 Support, Multi-connections)
 
-**Changement** : passer de 4 colonnes à une grille 2x2 avec des cartes plus larges et un layout icon+texte côte à côte.
+### 4. `src/components/PricingSection.tsx`
 
-- Titre centré : "Premium Features"
-- Grille `grid-cols-1 md:grid-cols-2` (2x2)
-- Chaque carte : icône à gauche dans un carré vert/fond gris, titre + description à droite
-- Fond légèrement différent du noir pur (gris très foncé `bg-zinc-900` ou `bg-card`)
+Refonte vers 4 colonnes :
+- Titre "Our Plans" centré
+- Grille `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4` (4 plans côte à côte)
+- Cartes plus compactes et dépouillées :
+  - Nom du plan en titre
+  - Prix barré + prix actuel en gros vert
+  - 3 lignes de features avec ✓ (plus concis que 10 items)
+  - Bouton "Choose this plan" vert
+  - Carte "Popular" avec badge "MOST POPULAR" et bordure verte accentuée
+- Fond de section dark cohérent
 
-Les 4 features restent identiques au contenu actuel (4K/FHD Quality, Anti-Freeze Technology, Multi-Device Support, 24/7 Support).
+### 5. `src/components/TestimonialsSection.tsx` + `src/components/FAQSection.tsx`
 
-### 3. `src/components/prelanding/DeviceBanner.tsx`
+Selon le design Stitch, ces deux sections sont présentées **côte à côte** en 2 colonnes :
+- Colonne gauche : "Customer Testimonials" avec 2 avis empilés (cartes avec ★★★★★, texte, avatar circulaire, nom + "Verified Purchase")
+- Colonne droite : "Frequently Asked Questions" avec accordion
 
-**Refonte complète** : passer d'icônes simples à 3 cartes visuelles avec captures d'écran.
+Deux options :
+- **Option A** : Modifier `Index.tsx` pour les rendre côte à côte dans un wrapper grid
+- **Option B** : Fusionner les deux dans un nouveau composant `TestimonialsAndFAQ.tsx`
 
-- Titre centré : "Supported Devices"
-- Grille 3 colonnes avec des cartes rectangulaires qui montrent une image de prévisualisation du contenu sur chaque type d'écran
-- Légendes en dessous : "Smart TV", "Android/iOS Devices", "Firestick/MAG Box"
-- Utiliser des images placeholder sombres avec overlay de contenu IPTV simulé
+Choix retenu : **Option A** — wrapper dans `Index.tsx` avec `grid-cols-1 lg:grid-cols-2`, plus simple et non-destructif.
 
-Pour les images de prévisualisation : utiliser des URLs d'images Unsplash libres de droits montrant des interfaces TV/streaming (ex: TV avec interface media, tablette, télécommande firestick).
+Il faudra aussi adapter `TestimonialsSection` pour ne montrer que 2 avis en format compact (avec avatar initiale cercle vert + badge "Verified Purchase"), et `FAQSection` pour retirer le CTA "Another Question" en bas.
 
-### 4. `src/components/prelanding/ReviewsSection.tsx`
+### 6. `src/components/ContactSection.tsx`
 
-**Refonte majeure** : passer de la grille 3 colonnes au slider/carrousel avec 1 avis affiché à la fois.
+Simplifier selon le design Stitch :
+- Titre "Contact Our Team" centré
+- 2 colonnes :
+  - Gauche : 3 blocs (Live Chat / Email / Phone) avec icône vert, titre, sous-titre
+  - Droite : formulaire compact avec 4 champs (Full name, Email, Subject, Message) + bouton "Send message" vert pleine largeur
 
-- Titre centré : "What Our Customers Say"
-- Un seul avis visible : guillemets vert + photo de profil (avatar avec initiale ou image) + étoiles jaunes + texte + nom + lieu
-- Flèches gauche/droite pour naviguer entre les avis
-- State React `currentIndex` + fonctions `prev()` / `next()`
-- Design de la carte : fond gris foncé, guillemets vert vif en haut à gauche, photo de profil circulaire
+### 7. `src/components/Footer.tsx`
 
-### 5. `src/components/prelanding/FinalCTA.tsx`
+Simplifier radicalement selon le design Stitch :
+- Ligne supérieure : logo "Footer" (ou IPTV Express) à gauche + icônes paiement (Visa, Mastercard, Maestro, Amex) à droite
+- Ligne inférieure : liens (Legal | Sitemap | Terms | Blog | Contact) à gauche + icônes réseaux sociaux (Facebook, Twitter, YouTube, Instagram) à droite
+- Fond `bg-black` ou très sombre, sans le bloc disclaimer complexe
 
-**Changement** : la section CTA doit avoir un fond vert vif dominant (pas juste un accent).
+### 8. `src/pages/Index.tsx`
 
-- Container avec `bg-primary/90` ou dégradé vert
-- Titre blanc : "Ready to Cut the Cable?"
-- Sous-titre blanc/semi-transparent
-- Bouton blanc avec texte vert : "Get Your Free Trial Now"
-- Note de garantie en blanc semi-transparent en bas
+- Importer et ajouter `<HomeNavbar />` au-dessus du `<main>`
+- Wrapper `TestimonialsSection` + `FAQSection` dans une `div` avec `className="grid grid-cols-1 lg:grid-cols-2 gap-8 container mx-auto px-6"`
+- Garder la logique de navigation vers `/checkout` intacte
 
-### 6. `src/components/prelanding/PrelandingFooter.tsx`
+## Ordre des sections final (conforme au design Stitch)
 
-**Amélioration** : ajouter des liens de navigation dans le footer.
-
-- Logo à gauche
-- Liens centraux : Features | Reviews | FAQ | EN (sélecteur langue)
-- Copyright à droite
-- Liens Terms of Service | Privacy Policy à gauche en bas
-
-### 7. `src/components/prelanding/StickyNavbar.tsx`
-
-**Ajout** : lien "Devices" dans la navbar (actuellement il manque par rapport au design Stitch).
-
-- Ajouter `scrollToSection("devices")` bouton dans la navbar desktop et mobile
-
-### 8. `src/components/prelanding/DeviceBanner.tsx`
-
-Ajouter `id="devices"` à la section pour que le lien navbar fonctionne.
-
-## Image Hero
-
-L'image de famille regardant la TV dans le design Stitch est la différence visuelle la plus impactante. Pour l'implémenter :
-- Utiliser `src/assets/hero-image.jpg` déjà présente dans le projet
-- Si l'image actuelle n'est pas adaptée, utiliser une image Unsplash en URL directe représentant une famille regardant la TV dans un salon confortable
-- Appliquer un gradient overlay `from-black via-black/70 to-transparent` de gauche à droite pour fondre l'image avec le texte
-
-## Ordre des sections (identique au design Stitch)
-
-```
-StickyNavbar (fixe)
-PrelandingHero (texte gauche + image droite)
-FeaturesGrid (grille 2x2)
-DeviceBanner (3 cartes visuelles)
-ReviewsSection (slider 1 avis)
-PrelandingFAQ (accordéon - inchangé)
-FinalCTA (fond vert vif)
-PrelandingFooter (2 colonnes)
+```text
+HomeNavbar (fixe, nouvelle)
+  ↓
+HeroSection (image plein écran + titre + CTA)
+  ↓
+FeaturesSection (grille 8 features 4×2)
+  ↓
+PricingSection (4 colonnes)
+  ↓
+[grid-cols-2] TestimonialsSection | FAQSection
+  ↓
+ContactSection (simplifié 2 colonnes)
+  ↓
+Footer (minimaliste)
 ```
 
-Note : La section `ComparisonSection` disparaît du design Stitch — elle sera supprimée de `PreLanding.tsx`.
+## Résumé des fichiers
 
-## Résumé des changements
+| Fichier | Action | Description |
+|---------|--------|-------------|
+| `src/components/HomeNavbar.tsx` | Créer | Navbar fixe avec logo, navigation, Log in + Sign up |
+| `src/components/HeroSection.tsx` | Refonte | Image plein écran, titre IPTV Express, CTA |
+| `src/components/FeaturesSection.tsx` | Adapter | Grille 4×2 compacte avec icônes vert |
+| `src/components/PricingSection.tsx` | Adapter | 4 colonnes, badges, cartes compactes |
+| `src/components/TestimonialsSection.tsx` | Simplifier | 2 avis empilés avec avatars + badges |
+| `src/components/FAQSection.tsx` | Simplifier | Retirer CTA "Another Question" |
+| `src/components/ContactSection.tsx` | Simplifier | 2 colonnes : méthodes + formulaire compact |
+| `src/components/Footer.tsx` | Refonte | Footer minimaliste avec paiements + réseaux sociaux |
+| `src/pages/Index.tsx` | Modifier | Ajouter navbar, wrapper grid pour Testimonials+FAQ |
 
-| Fichier | Type de changement |
-|---------|-------------------|
-| `src/pages/PreLanding.tsx` | Retirer `ComparisonSection` |
-| `src/components/prelanding/PrelandingHero.tsx` | Refonte layout 2 colonnes + image |
-| `src/components/prelanding/FeaturesGrid.tsx` | Grille 2x2 avec cards icon+texte côte à côte |
-| `src/components/prelanding/DeviceBanner.tsx` | 3 cartes visuelles + id="devices" |
-| `src/components/prelanding/ReviewsSection.tsx` | Slider carrousel 1 avis à la fois |
-| `src/components/prelanding/FinalCTA.tsx` | Fond vert vif dominant |
-| `src/components/prelanding/PrelandingFooter.tsx` | Footer 2 colonnes avec nav |
-| `src/components/prelanding/StickyNavbar.tsx` | Ajouter lien "Devices" |
+## Notes techniques
+
+- L'image `src/assets/hero-image.jpg` existante sera utilisée comme fond du Hero
+- La logique `navigate('/checkout', { state })` dans `Index.tsx` reste intacte
+- Les traductions `en.ts` et `fr.ts` existantes sont suffisantes — aucune nouvelle clé requise
+- Le `DemoModal` et `DynamicBackground` seront retirés du Hero (non présents dans le design Stitch)
+- Le padding-top du Hero sera ajusté pour compenser la navbar fixe (`pt-16` ou `pt-20`)
