@@ -46,6 +46,12 @@ const StickyNavbar = () => {
               {t("common.features")}
             </button>
             <button
+              onClick={() => scrollToSection("devices")}
+              className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+            >
+              Devices
+            </button>
+            <button
               onClick={() => scrollToSection("reviews")}
               className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
             >
@@ -60,7 +66,7 @@ const StickyNavbar = () => {
             <LanguageSwitcher />
             <Button
               onClick={goToPricing}
-              className="font-semibold"
+              className="font-semibold rounded-full"
             >
               {t("common.getStarted")}
             </Button>
@@ -90,6 +96,12 @@ const StickyNavbar = () => {
                 {t("common.features")}
               </button>
               <button
+                onClick={() => scrollToSection("devices")}
+                className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
+              >
+                Devices
+              </button>
+              <button
                 onClick={() => scrollToSection("reviews")}
                 className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
               >
@@ -103,7 +115,7 @@ const StickyNavbar = () => {
               </button>
               <Button
                 onClick={goToPricing}
-                className="w-full font-semibold"
+                className="w-full font-semibold rounded-full"
               >
                 {t("common.getStarted")}
               </Button>

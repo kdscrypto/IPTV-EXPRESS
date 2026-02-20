@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Play, Tv, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import heroImage from "@/assets/hero-image.jpg";
 
 const PrelandingHero = () => {
   const navigate = useNavigate();
@@ -16,81 +17,72 @@ const PrelandingHero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-20">
-      {/* Abstract gradient background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-primary/10" />
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[128px] animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-80 h-80 bg-primary/15 rounded-full blur-[100px]" style={{ animation: "glow-pulse 4s ease-in-out infinite" }} />
-        
-        {/* Subtle grid pattern */}
-        <div 
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
-          }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="max-w-4xl mx-auto text-center" style={{ animation: "slide-up 0.8s ease-out" }}>
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/30 mb-8">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">{t("main.hero.streamingPremium")}</span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-6">
-            {t("prelanding.hero.headline").split("Cable TV")[0]}
-            <span className="text-primary">Cable TV.</span>
+    <section className="relative min-h-screen bg-black overflow-hidden pt-16 sm:pt-20">
+      {/* Two-column layout */}
+      <div className="grid md:grid-cols-2 min-h-[calc(100vh-4rem)]">
+        {/* Left column - Text */}
+        <div className="flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-16 md:py-0 relative z-10 order-2 md:order-1">
+          {/* Headline */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4">
+            <span className="text-foreground">Stop Overpaying<br />for Cable TV.</span>
             <br />
-            <span className="text-foreground">{t("prelanding.hero.headline").includes("Arrêtez") ? "Obtenez un accès illimité aujourd'hui." : "Get Unlimited Access Today."}</span>
+            <span className="text-primary">Get Unlimited<br />Access Today.</span>
           </h1>
 
           {/* Sub-headline */}
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            {t("prelanding.hero.subheadline")}
+          <p className="text-muted-foreground text-base sm:text-lg mb-8 max-w-md leading-relaxed">
+            Enjoy 10,000+ Channels, Premium Sports & Movies in Crystal Clear 4K — Starting at Just{" "}
+            <span className="text-foreground font-semibold">$9.98/month.</span>
           </p>
 
           {/* CTA Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mb-10">
             <Button
               onClick={goToPricing}
-              size="xl"
-              className="w-full sm:w-auto text-lg font-bold px-10 py-6 rounded-xl"
+              size="lg"
+              className="text-base font-bold px-8 py-6 rounded-full group"
               style={{ animation: "pulse-cta 2s ease-in-out infinite" }}
             >
-              <Play className="w-5 h-5 mr-2" />
-              {t("prelanding.hero.cta")}
+              Get Started
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
 
-          {/* Trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-muted-foreground text-sm">
+          {/* Trust badges */}
+          <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <Tv className="w-4 h-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded bg-secondary/50 text-xs font-bold text-foreground">4K</div>
               <span>4K Ultra HD</span>
             </div>
-            <div className="w-px h-4 bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded bg-secondary/50">
+                <svg className="w-4 h-4 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
               <span>No Buffering</span>
             </div>
-            <div className="w-px h-4 bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="text-primary">★★★★★</span>
+              <div className="flex items-center justify-center w-8 h-8 rounded bg-secondary/50">
+                <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
               <span>{t("prelanding.hero.trusted")}</span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-2">
-          <div className="w-1 h-2 bg-primary rounded-full" />
+        {/* Right column - Image */}
+        <div className="relative order-1 md:order-2 min-h-[300px] md:min-h-full">
+          <img
+            src={heroImage}
+            alt="Family watching IPTV on Smart TV"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          {/* Gradient overlay - fade to black on left for desktop, bottom for mobile */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent md:block hidden" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent md:hidden" />
         </div>
       </div>
     </section>

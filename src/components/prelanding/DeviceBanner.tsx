@@ -1,35 +1,55 @@
-import { Tv, Smartphone, Tablet, Monitor, Flame } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const DeviceBanner = () => {
   const { t } = useLanguage();
 
   const devices = [
-    { icon: Tv, nameKey: "prelanding.devices.smartTv" },
-    { icon: Smartphone, nameKey: "prelanding.devices.android" },
-    { icon: Tablet, nameKey: "prelanding.devices.apple" },
-    { icon: Flame, nameKey: "prelanding.devices.firestick" },
-    { icon: Monitor, nameKey: "prelanding.devices.magBox" },
+    {
+      label: "Smart TV",
+      image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=400&h=250&fit=crop&q=80",
+      alt: "Smart TV showing IPTV streaming interface",
+    },
+    {
+      label: "Android/iOS Devices",
+      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=250&fit=crop&q=80",
+      alt: "Mobile phone showing streaming app",
+    },
+    {
+      label: "Firestick/MAG Box",
+      image: "https://images.unsplash.com/photo-1601944177325-f8867652837f?w=400&h=250&fit=crop&q=80",
+      alt: "Firestick remote and streaming device",
+    },
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-black border-y border-border/50">
+    <section id="devices" className="py-16 sm:py-20 bg-card border-y border-border/50">
       <div className="container mx-auto px-4 sm:px-6">
-        <p className="text-center text-muted-foreground text-sm mb-8 uppercase tracking-widest font-medium">
-          {t("prelanding.deviceBanner.title")}
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl sm:text-4xl font-black">
+            Supported Devices
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
           {devices.map((device, index) => (
             <div
               key={index}
-              className="flex flex-col items-center gap-3 group cursor-default"
+              className="group rounded-2xl overflow-hidden border border-border hover:border-primary/40 transition-all duration-300"
             >
-              <div className="w-16 h-16 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:bg-primary/10 transition-colors duration-300">
-                <device.icon className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+              {/* Device image */}
+              <div className="relative aspect-video overflow-hidden bg-black">
+                <img
+                  src={device.image}
+                  alt={device.alt}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
-              <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-                {t(device.nameKey)}
-              </span>
+
+              {/* Label */}
+              <div className="py-4 px-4 bg-secondary/30 text-center">
+                <p className="font-semibold text-foreground text-sm">{device.label}</p>
+              </div>
             </div>
           ))}
         </div>

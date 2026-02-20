@@ -1,6 +1,5 @@
 import StickyNavbar from "@/components/prelanding/StickyNavbar";
 import PrelandingHero from "@/components/prelanding/PrelandingHero";
-import ComparisonSection from "@/components/prelanding/ComparisonSection";
 import FeaturesGrid from "@/components/prelanding/FeaturesGrid";
 import DeviceBanner from "@/components/prelanding/DeviceBanner";
 import ReviewsSection from "@/components/prelanding/ReviewsSection";
@@ -13,7 +12,6 @@ const PreLanding = () => {
     <div className="min-h-screen bg-black text-foreground">
       <StickyNavbar />
       <PrelandingHero />
-      <ComparisonSection />
       <FeaturesGrid />
       <DeviceBanner />
       <ReviewsSection />

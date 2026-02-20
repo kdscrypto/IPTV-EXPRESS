@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Zap, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const FinalCTA = () => {
@@ -16,41 +15,38 @@ const FinalCTA = () => {
   };
 
   return (
-    <section id="cta" className="py-20 sm:py-28 bg-background relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-primary/5 to-black" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
+    <section id="cta" className="py-16 sm:py-20">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="rounded-2xl overflow-hidden bg-primary p-10 sm:p-16 text-center relative">
+          {/* Subtle background texture */}
+          <div className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }}
+          />
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="max-w-3xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-8">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Limited Time Offer</span>
+          <div className="relative z-10">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-primary-foreground mb-4">
+              {t("prelanding.cta.title")}
+            </h2>
+
+            <p className="text-primary-foreground/80 text-base sm:text-lg mb-8 max-w-xl mx-auto">
+              {t("prelanding.cta.subtitle")}
+            </p>
+
+            <Button
+              onClick={goToPricing}
+              size="lg"
+              className="bg-background text-foreground hover:bg-background/90 font-bold px-10 py-6 rounded-full text-base"
+            >
+              {t("prelanding.cta.button")}
+            </Button>
+
+            <p className="mt-6 text-primary-foreground/60 text-sm">
+              {t("prelanding.cta.guarantee")}
+            </p>
           </div>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6">
-            {t("prelanding.cta.title").split("?")[0]}?
-          </h2>
-          
-          <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto">
-            {t("prelanding.cta.subtitle")}
-          </p>
-
-          <Button
-            onClick={goToPricing}
-            size="xl"
-            className="w-full sm:w-auto text-lg font-bold px-12 py-7 rounded-xl group"
-            style={{ animation: "pulse-cta 2s ease-in-out infinite" }}
-          >
-            {t("prelanding.cta.button")}
-            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
-
-          {/* Trust badges */}
-          <p className="mt-10 text-muted-foreground text-sm">
-            {t("prelanding.cta.guarantee")}
-          </p>
         </div>
       </div>
     </section>
