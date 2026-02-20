@@ -1,74 +1,80 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { PlayCircle } from "lucide-react";
-import DemoModal from "@/components/DemoModal";
-import DynamicBackground from "@/components/DynamicBackground";
-import { useLanguage } from "@/hooks/useLanguage";
+import heroImage from "@/assets/hero-image.jpg";
 
 const HeroSection = () => {
-  const [isDemoOpen, setIsDemoOpen] = useState(false);
-  const { t } = useLanguage();
-
   const scrollToPricing = () => {
-    const pricingSection = document.getElementById('pricing');
-    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+    const pricingSection = document.getElementById("pricing");
+    pricingSection?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="relative min-h-screen hero-gradient flex items-center overflow-hidden">
-      {/* Dynamic Background */}
-      <DynamicBackground className="z-0" />
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-end overflow-hidden"
+    >
+      {/* Background Image */}
+      <img
+        src={heroImage}
+        alt="Family watching IPTV on a smart TV"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
 
-      {/* Floating Elements */}
-      <div className="absolute top-20 right-20 animate-float opacity-30">
-        <div className="w-20 h-20 rounded-full bg-primary/20 blur-xl"></div>
-      </div>
-      <div className="absolute bottom-40 left-10 animate-float opacity-20" style={{ animationDelay: '2s' }}>
-        <div className="w-32 h-32 rounded-full bg-primary/15 blur-2xl"></div>
-      </div>
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-4xl">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="glass p-2 rounded-lg">
-              <PlayCircle className="w-6 h-6 text-primary" />
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-6 pb-24 pt-32">
+        <div className="max-w-2xl">
+          {/* Badge */}
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-primary/20 border border-primary/40 p-1.5 rounded-lg">
+              <PlayCircle className="w-5 h-5 text-primary" />
             </div>
-            <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
-              {t("main.hero.streamingPremium")}
+            <span className="text-sm font-semibold text-primary uppercase tracking-widest">
+              Premium IPTV Service
             </span>
           </div>
 
-          {/* Titre principal */}
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none">
-            <span className="gradient-text">{t("main.hero.title1")}</span>
-            <br />
-            <span className="text-foreground">{t("main.hero.title2")}</span>
+          {/* Headline */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-none mb-6 text-white">
+            IPTV{" "}
+            <span className="text-primary">Express</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-            {t("main.hero.description")} <strong className="text-primary">{t("main.hero.channels")}</strong> {t("main.hero.and")}
-            <strong className="text-primary"> {t("main.hero.vod")}</strong> {t("main.hero.descriptionEnd")}
+          {/* Subtitle */}
+          <p className="text-lg md:text-xl text-white/80 mb-10 max-w-xl leading-relaxed">
+            Access over{" "}
+            <strong className="text-primary">15,000 Channels</strong> and{" "}
+            <strong className="text-primary">80,000 VOD</strong> in 4K quality.
+            Compatible with all your favorite devices.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-8 sm:mb-12 sm:justify-end mt-4">
-            <Button variant="glass" size="lg" onClick={() => setIsDemoOpen(true)}>
-              {t("main.hero.demo")}
-            </Button>
-            <Button 
-              variant="hero" 
-              size="lg" 
-              onClick={scrollToPricing}
-              className="group"
-            >
-              {t("main.hero.cta")}
-              <PlayCircle className="w-4 h-4 transition-transform group-hover:scale-110" />
-            </Button>
-          </div>
+          {/* CTA Button */}
+          <button
+            onClick={scrollToPricing}
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/30"
+          >
+            Get Started Now
+            <PlayCircle className="w-5 h-5" />
+          </button>
 
+          {/* Trust Badges */}
+          <div className="mt-8 flex flex-wrap gap-4 text-sm text-white/60">
+            <span className="flex items-center gap-1">
+              <span className="text-primary font-bold">✓</span> 4K Ultra HD
+            </span>
+            <span className="text-white/30">|</span>
+            <span className="flex items-center gap-1">
+              <span className="text-primary font-bold">✓</span> No Buffering
+            </span>
+            <span className="text-white/30">|</span>
+            <span className="flex items-center gap-1">
+              <span className="text-primary font-bold">✓</span> 50,000+ customers worldwide
+            </span>
+          </div>
         </div>
       </div>
-
-      <DemoModal isOpen={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
     </section>
   );
 };

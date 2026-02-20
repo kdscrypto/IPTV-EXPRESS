@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import HomeNavbar from "@/components/HomeNavbar";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
@@ -31,7 +32,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background font-inter">
+    <div className="min-h-screen bg-black font-inter">
       {/* JSON-LD Structured Data pour le SEO */}
       <script
         type="application/ld+json"
@@ -43,57 +44,42 @@ const Index = () => {
             "description": "Service IPTV express avec plus de 15000 chaînes TV et 80000 contenus VOD en qualité 4K",
             "url": "https://iptv-express.fr",
             "logo": "/lovable-uploads/aba13bc0-ea36-4a76-998a-db598bc5a404.png",
-            "sameAs": [
-              "https://www.facebook.com/iptvexpress",
-              "https://twitter.com/iptvexpress"
-            ],
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": "+33-1-XX-XX-XX-XX",
-              "contactType": "customer service",
-              "availableLanguage": "French",
-              "areaServed": "FR"
-            },
             "offers": [
               {
                 "@type": "Offer",
                 "name": "Abonnement IPTV 1 mois",
                 "price": "15",
-                "priceCurrency": "USD",
-                "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD"
-              },
-              {
-                "@type": "Offer",
-                "name": "Abonnement IPTV 3 mois",
-                "price": "25",
-                "priceCurrency": "USD",
-                "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD"
-              },
-              {
-                "@type": "Offer",
-                "name": "Abonnement IPTV 6 mois",
-                "price": "45",
-                "priceCurrency": "USD",
-                "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD en 4K"
+                "priceCurrency": "USD"
               },
               {
                 "@type": "Offer",
                 "name": "Abonnement IPTV 12 mois Premium",
                 "price": "60",
-                "priceCurrency": "USD",
-                "description": "Accès Premium avec support VIP et toutes les fonctionnalités"
+                "priceCurrency": "USD"
               }
             ]
           })
         }}
       />
 
+      {/* Fixed Navbar */}
+      <HomeNavbar />
+
       <main>
         <HeroSection />
         <FeaturesSection />
         <PricingSection onSelectPlan={handleSelectPlan} />
-        <TestimonialsSection />
-        <FAQSection />
+
+        {/* Testimonials + FAQ side by side */}
+        <section className="bg-zinc-950">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <TestimonialsSection />
+              <FAQSection />
+            </div>
+          </div>
+        </section>
+
         <ContactSection />
       </main>
 
