@@ -417,6 +417,10 @@ export const en = {
       requestTransferred: "Your request is automatically transferred to our support.",
       error: "Error",
       tryAgain: "An error occurred. Please try again.",
+      cryptoSelector: "Select your payment currency",
+      stablecoin: "Stablecoin",
+      cryptoBadge: "Crypto",
+      stablecoinNote: "Fixed price — no exchange rate risk",
     },
     footer: {
       description: "The French leader in express IPTV with over 15,000 channels and 80,000 VOD content. 4K quality, 24/7 support.",

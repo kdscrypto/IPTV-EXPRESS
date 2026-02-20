@@ -13,6 +13,7 @@ interface PaymentRequest {
   email: string;
   device?: string;
   deviceInfo?: string;
+  payCurrency?: string;
 }
 
 // Validation functions
@@ -91,7 +92,13 @@ serve(async (req) => {
     const deviceInfo = requestBody.deviceInfo ? sanitizeString(requestBody.deviceInfo, 500) : '';
     const price = requestBody.price;
 
-    console.log('Creating payment for:', { planId, planName, price, email });
+    // Validate and sanitize pay currency
+    const validCurrencies = ['btc', 'usdttrc20', 'usdte', 'usdc', 'ltc'];
+    const payCurrency = requestBody.payCurrency && validCurrencies.includes(requestBody.payCurrency.toLowerCase())
+      ? requestBody.payCurrency.toLowerCase()
+      : 'btc';
+
+    console.log('Creating payment for:', { planId, planName, price, email, payCurrency });
 
     // Create payment with NOWPayments
     const nowPaymentResponse = await fetch('https://api.nowpayments.io/v1/payment', {
@@ -103,7 +110,7 @@ serve(async (req) => {
       body: JSON.stringify({
         price_amount: price,
         price_currency: 'usd',
-        pay_currency: 'btc', // Default to BTC, user can change on payment page
+        pay_currency: payCurrency,
         ipn_callback_url: `${supabaseUrl}/functions/v1/payment-webhook`,
         order_id: crypto.randomUUID(),
         order_description: `IPTV Express - ${planName}`,
