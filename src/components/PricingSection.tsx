@@ -1,17 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Check, Crown, Star, Zap, Shield } from "lucide-react";
+import { Check, Crown, Star, Zap } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 interface PricingPlan {
   id: string;
-  nameKey: string;
-  durationKey: string;
+  name: string;
   durationMonths: number;
   price: number;
   originalPrice?: number;
   popular?: boolean;
   premium?: boolean;
-  featuresKeys: string[];
+  features: string[];
   icon: React.ComponentType<{ className?: string }>;
 }
 
@@ -20,212 +18,189 @@ interface PricingSectionProps {
 }
 
 const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   const plans: PricingPlan[] = [
     {
       id: "1month",
-      nameKey: "main.pricing.plans.starter",
-      durationKey: "main.pricing.month",
+      name: "Starter",
       durationMonths: 1,
       price: 15,
       originalPrice: 30,
-      featuresKeys: [
-        "main.pricing.features.liveChannels",
-        "main.pricing.features.moviesAndSeries",
-        "main.pricing.features.fullHd",
-        "main.pricing.features.connections2",
-        "main.pricing.features.emailSupport",
-        "main.pricing.features.allDevices"
+      features: [
+        "15,000+ live channels",
+        "80,000+ movies & series",
+        "Full HD quality",
+        "2 simultaneous connections",
+        "Email support",
       ],
-      icon: Zap
+      icon: Zap,
     },
     {
       id: "3months",
-      nameKey: "main.pricing.plans.discovery",
-      durationKey: "main.pricing.months",
+      name: "Discovery",
       durationMonths: 3,
       price: 25,
       originalPrice: 50,
-      featuresKeys: [
-        "main.pricing.features.liveChannels",
-        "main.pricing.features.moviesAndSeries",
-        "main.pricing.features.fullHd",
-        "main.pricing.features.connections3",
-        "main.pricing.features.emailSupport",
-        "main.pricing.features.allDevices"
+      features: [
+        "15,000+ live channels",
+        "80,000+ movies & series",
+        "Full HD quality",
+        "3 simultaneous connections",
+        "24/7 support",
       ],
-      icon: Zap
+      icon: Zap,
     },
     {
       id: "6months",
-      nameKey: "main.pricing.plans.popular",
-      durationKey: "main.pricing.months",
+      name: "Popular",
       durationMonths: 6,
       price: 45,
       originalPrice: 90,
       popular: true,
-      featuresKeys: [
-        "main.pricing.features.liveChannels",
-        "main.pricing.features.moviesAndSeries",
-        "main.pricing.features.uhd4k",
-        "main.pricing.features.connections5",
-        "main.pricing.features.support247",
-        "main.pricing.features.allDevices",
-        "main.pricing.features.catchup7",
-        "main.pricing.features.epg"
+      features: [
+        "15,000+ live channels",
+        "80,000+ movies & series",
+        "4K Ultra HD quality",
+        "5 simultaneous connections",
+        "24/7 support + EPG",
       ],
-      icon: Star
+      icon: Star,
     },
     {
       id: "12months",
-      nameKey: "main.pricing.plans.premium",
-      durationKey: "main.pricing.months",
+      name: "Premium",
       durationMonths: 12,
       price: 60,
       originalPrice: 120,
       premium: true,
-      featuresKeys: [
-        "main.pricing.features.liveChannels",
-        "main.pricing.features.moviesAndSeries",
-        "main.pricing.features.uhd4k",
-        "main.pricing.features.connections5",
-        "main.pricing.features.vipSupport",
-        "main.pricing.features.allDevices",
-        "main.pricing.features.catchup14",
-        "main.pricing.features.epg",
-        "main.pricing.features.premiumApps",
-        "main.pricing.features.lifetimeUpdates"
+      features: [
+        "15,000+ live channels",
+        "80,000+ movies & series",
+        "4K Ultra HD quality",
+        "5 simultaneous connections",
+        "VIP priority support",
       ],
-      icon: Crown
-    }
+      icon: Crown,
+    },
   ];
 
-  const getCardClassName = (plan: PricingPlan) => {
-    if (plan.premium) {
-      return "glass relative border-2 border-primary/50 bg-gradient-card hover:border-primary transform hover:scale-105 transition-all duration-500 overflow-hidden";
-    }
-    if (plan.popular) {
-      return "glass relative border border-primary/30 bg-card hover:border-primary/50 transform hover:scale-105 transition-all duration-500";
-    }
-    return "glass relative border border-border bg-card hover:border-primary/30 transform hover:scale-105 transition-all duration-500";
-  };
-
   return (
-    <section id="pricing" className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-primary/5 to-background"></div>
-      
+    <section id="pricing" className="py-20 bg-zinc-950 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 pointer-events-none" />
+
       <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-black mb-6">
-            <span className="text-foreground">{t("main.pricing.title")}</span>
-            <br />
-            <span className="gradient-text">{t("main.pricing.titleHighlight")}</span>
+        {/* Title */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-black text-white">
+            Our <span className="text-primary">Plans</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {t("main.pricing.subtitle")}
+          <p className="mt-3 text-muted-foreground text-lg">
+            No contracts. Cancel anytime.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {plans.map((plan) => (
-            <div key={plan.id} className={getCardClassName(plan)}>
-              {/* Premium Glow Effect */}
-              {plan.premium && (
-                <div className="absolute inset-0 bg-gradient-primary opacity-10 blur-xl"></div>
-              )}
-              
-              {/* Popular Badge */}
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-gradient-primary text-white px-6 py-2 rounded-full text-sm font-bold shadow-primary">
-                    {t("main.pricing.mostPopular")}
+        {/* 4-column grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+          {plans.map((plan) => {
+            const Icon = plan.icon;
+            const isHighlighted = plan.popular || plan.premium;
+
+            return (
+              <div
+                key={plan.id}
+                className={`relative flex flex-col rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                  plan.premium
+                    ? "border-primary bg-gradient-to-b from-primary/10 to-zinc-900"
+                    : plan.popular
+                    ? "border-primary/60 bg-zinc-900"
+                    : "border-zinc-800 bg-zinc-900"
+                }`}
+              >
+                {/* Badge */}
+                {isHighlighted && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
+                      {plan.popular ? "⚡ MOST POPULAR" : "👑 PREMIUM"}
+                    </span>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Premium Badge */}
-              {plan.premium && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-gradient-primary text-white px-6 py-2 rounded-full text-sm font-bold shadow-primary">
-                    {t("main.pricing.premium")}
+                <div className="p-6 flex flex-col h-full">
+                  {/* Icon + Name */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div
+                      className={`p-2 rounded-xl ${
+                        isHighlighted ? "bg-primary/20" : "bg-zinc-800"
+                      }`}
+                    >
+                      <Icon
+                        className={`w-5 h-5 ${
+                          isHighlighted ? "text-primary" : "text-muted-foreground"
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-lg leading-none">
+                        {plan.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {plan.durationMonths} month{plan.durationMonths > 1 ? "s" : ""}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )}
 
-              <div className="relative p-8">
-                {/* Icon */}
-                <div className="flex justify-center mb-6">
-                  <div className={`p-4 rounded-2xl ${plan.premium ? 'bg-gradient-primary' : 'bg-primary/20'}`}>
-                    <plan.icon className={`w-8 h-8 ${plan.premium ? 'text-white' : 'text-primary'}`} />
-                  </div>
-                </div>
-
-                {/* Plan Name */}
-                <h3 className="text-2xl font-bold text-center mb-2">{t(plan.nameKey)}</h3>
-                <p className="text-muted-foreground text-center mb-6">{plan.durationMonths} {t(plan.durationKey)}</p>
-
-                {/* Pricing */}
-                <div className="text-center mb-8">
-                  <div className="flex items-center justify-center gap-3 mb-2">
+                  {/* Price */}
+                  <div className="mb-5">
                     {plan.originalPrice && (
-                      <span className="text-2xl text-muted-foreground line-through">
+                      <span className="text-muted-foreground line-through text-sm mr-2">
                         ${plan.originalPrice}
                       </span>
                     )}
-                    <span className="text-5xl font-black text-primary">
+                    <span className="text-4xl font-black text-primary">
                       ${plan.price}
                     </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
                     {plan.originalPrice && (
-                      <span className="text-success font-semibold">
-                        {t("main.pricing.save")} ${plan.originalPrice - plan.price}
-                      </span>
+                      <div className="mt-1">
+                        <span className="text-xs text-green-400 font-semibold">
+                          Save ${plan.originalPrice - plan.price}
+                        </span>
+                      </div>
                     )}
-                  </p>
+                  </div>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6 flex-1">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-white/80">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <button
+                    onClick={() => onSelectPlan(plan.id, plan.price)}
+                    className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02] ${
+                      isHighlighted
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "bg-zinc-800 text-white hover:bg-zinc-700 border border-zinc-700"
+                    }`}
+                  >
+                    Choose this plan
+                  </button>
                 </div>
-
-                {/* Features */}
-                <ul className="space-y-3 mb-8">
-                  {plan.featuresKeys.map((featureKey, idx) => (
-                    <li key={idx} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm">{t(featureKey)}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA Button */}
-                <Button 
-                  variant={plan.premium ? "premium" : plan.popular ? "hero" : "default"}
-                  size="lg"
-                  className="w-full"
-                  onClick={() => onSelectPlan(plan.id, plan.price)}
-                >
-                  {t("main.pricing.choosePlan")}
-                </Button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Trust Indicators */}
-        <div className="mt-16 text-center">
-          <div className="flex flex-wrap justify-center items-center gap-8 text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary" />
-              <span className="text-sm">{t("main.pricing.trust.securePayment")}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-primary" />
-              <span className="text-sm">{t("main.pricing.trust.instantActivation")}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-primary" />
-              <span className="text-sm">{t("main.pricing.trust.satisfactionGuarantee")}</span>
-            </div>
-          </div>
+        {/* Trust line */}
+        <div className="mt-10 text-center text-sm text-muted-foreground flex flex-wrap justify-center gap-6">
+          <span>🔒 Secure payment</span>
+          <span>⚡ Instant activation</span>
+          <span>✓ Satisfaction guaranteed</span>
         </div>
       </div>
     </section>
