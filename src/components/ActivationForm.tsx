@@ -29,9 +29,10 @@ interface ActivationFormProps {
   selectedPlan?: SelectedPlan | null;
   onClearPlan?: () => void;
   onPaymentCreated?: (payment: any) => void;
+  onNavigateBack?: () => void;
 }
 
-const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: ActivationFormProps) => {
+const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated, onNavigateBack }: ActivationFormProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [formData, setFormData] = useState<ActivationFormData>({
@@ -198,10 +199,14 @@ const ActivationForm = ({ selectedPlan, onClearPlan, onPaymentCreated }: Activat
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        onClearPlan?.();
-                        const pricingSection = document.getElementById('pricing');
-                        if (pricingSection) {
-                          pricingSection.scrollIntoView({ behavior: 'smooth' });
+                        if (onNavigateBack) {
+                          onNavigateBack();
+                        } else {
+                          onClearPlan?.();
+                          const pricingSection = document.getElementById('pricing');
+                          if (pricingSection) {
+                            pricingSection.scrollIntoView({ behavior: 'smooth' });
+                          }
                         }
                       }}
                       className="text-muted-foreground hover:text-foreground"
