@@ -1,74 +1,32 @@
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import ActivationForm from "@/components/ActivationForm";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
-import CryptoModal from "@/components/CryptoModal";
-import NOWPaymentModal from "@/components/NOWPaymentModal";
 
 const Index = () => {
-  const { toast } = useToast();
-  const [cryptoModal, setCryptoModal] = useState({
-    isOpen: false,
-    planName: '',
-    price: 0
-  });
-  const [selectedPlan, setSelectedPlan] = useState<{
-    id: string;
-    name: string;
-    price: number;
-  } | null>(null);
-  const [nowPayment, setNowPayment] = useState<{
-    isOpen: boolean;
-    payment: any;
-  }>({
-    isOpen: false,
-    payment: null,
-  });
+  const navigate = useNavigate();
 
-  // Configuration des plans (pourrait venir d'une API ou config)
   const getPlanName = (planId: string) => {
     const plans = {
       '1month': 'Starter (1 mois)',
       '3months': 'Découverte (3 mois)',
-      '6months': 'Populaire (6 mois)', 
+      '6months': 'Populaire (6 mois)',
       '12months': 'Premium (12 mois)'
     };
     return plans[planId as keyof typeof plans] || 'Plan IPTV';
   };
 
   const handleSelectPlan = (planId: string, price: number) => {
-    // Sauvegarder le plan sélectionné
-    setSelectedPlan({
-      id: planId,
-      name: getPlanName(planId),
-      price
-    });
-    
-    // Rediriger vers le formulaire d'activation
-    const activationSection = document.getElementById('activation');
-    if (activationSection) {
-      activationSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-
-    toast({
-      title: "Plan sélectionné !",
-      description: `Remplissez le formulaire ci-dessous pour ${getPlanName(planId)}`,
-    });
-  };
-
-  const handlePaymentCreated = (payment: any) => {
-    setNowPayment({
-      isOpen: true,
-      payment,
+    navigate('/checkout', {
+      state: {
+        planId,
+        planName: getPlanName(planId),
+        price
+      }
     });
   };
 
@@ -112,7 +70,7 @@ const Index = () => {
                 "description": "Accès à 15000+ chaînes TV et 80000 contenus VOD"
               },
               {
-                "@type": "Offer", 
+                "@type": "Offer",
                 "name": "Abonnement IPTV 6 mois",
                 "price": "45",
                 "priceCurrency": "USD",
@@ -121,7 +79,7 @@ const Index = () => {
               {
                 "@type": "Offer",
                 "name": "Abonnement IPTV 12 mois Premium",
-                "price": "60", 
+                "price": "60",
                 "priceCurrency": "USD",
                 "description": "Accès Premium avec support VIP et toutes les fonctionnalités"
               }
@@ -130,40 +88,16 @@ const Index = () => {
         }}
       />
 
-      {/* Sections principales */}
       <main>
         <HeroSection />
         <FeaturesSection />
         <PricingSection onSelectPlan={handleSelectPlan} />
         <TestimonialsSection />
-        {selectedPlan && (
-          <ActivationForm 
-            selectedPlan={selectedPlan}
-            onClearPlan={() => setSelectedPlan(null)}
-            onPaymentCreated={handlePaymentCreated}
-          />
-        )}
         <FAQSection />
         <ContactSection />
       </main>
 
       <Footer />
-
-      {/* Modal de paiement crypto legacy */}
-      <CryptoModal
-        isOpen={cryptoModal.isOpen}
-        onClose={() => setCryptoModal({ ...cryptoModal, isOpen: false })}
-        planName={cryptoModal.planName}
-        price={cryptoModal.price}
-      />
-
-      {/* Modal de paiement NOWPayments */}
-      <NOWPaymentModal
-        isOpen={nowPayment.isOpen}
-        onClose={() => setNowPayment({ isOpen: false, payment: null })}
-        payment={nowPayment.payment}
-      />
-
     </div>
   );
 };

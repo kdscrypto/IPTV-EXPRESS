@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import PreLanding from "./pages/PreLanding";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Navigate to="/prelanding" replace />} />
             <Route path="/home" element={<Index />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/prelanding" element={<PreLanding />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
