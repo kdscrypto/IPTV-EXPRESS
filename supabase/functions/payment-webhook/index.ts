@@ -35,36 +35,37 @@ serve(async (req) => {
     const body = await req.text();
     
     // Verify signature using Web Crypto API (CRITICAL SECURITY)
-    if (signature) {
-      const encoder = new TextEncoder();
-      const keyData = encoder.encode(ipnSecret);
-      const key = await crypto.subtle.importKey(
-        'raw',
-        keyData,
-        { name: 'HMAC', hash: 'SHA-512' },
-        false,
-        ['sign']
-      );
-      
-      const signatureBuffer = await crypto.subtle.sign(
-        'HMAC',
-        key,
-        encoder.encode(body)
-      );
-      
-      const calculatedSignature = Array.from(new Uint8Array(signatureBuffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-
-      if (signature !== calculatedSignature) {
-        console.error('Invalid signature - possible security breach attempt');
-        return new Response('Invalid signature', { status: 401 });
-      }
-      
-      console.log('Signature verified successfully');
-    } else {
-      console.warn('No signature provided - webhook may not be from NOWPayments');
+    if (!signature) {
+      console.error('Missing signature - rejecting unsigned webhook request');
+      return new Response('Signature required', { status: 401 });
     }
+
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(ipnSecret);
+    const key = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'HMAC', hash: 'SHA-512' },
+      false,
+      ['sign']
+    );
+    
+    const signatureBuffer = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(body)
+    );
+    
+    const calculatedSignature = Array.from(new Uint8Array(signatureBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    if (signature !== calculatedSignature) {
+      console.error('Invalid signature - possible security breach attempt');
+      return new Response('Invalid signature', { status: 401 });
+    }
+    
+    console.log('Signature verified successfully');
 
     const webhookData = JSON.parse(body);
     console.log('Webhook received:', { payment_id: webhookData.payment_id, status: webhookData.payment_status });
