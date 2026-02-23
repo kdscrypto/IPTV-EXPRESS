@@ -1,52 +1,33 @@
 import { useEffect, useRef } from "react";
 
-interface AtOptions {
-  key: string;
-  format: string;
-  height: number;
-  width: number;
-  params: Record<string, unknown>;
-}
-
 interface AdsterraNativeBannerProps {
-  atOptions: AtOptions;
+  scriptSrc: string;
+  containerId: string;
   className?: string;
 }
 
-const AdsterraNativeBanner = ({ atOptions, className = "" }: AdsterraNativeBannerProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
+const AdsterraNativeBanner = ({ scriptSrc, containerId, className = "" }: AdsterraNativeBannerProps) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const loaded = useRef(false);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (loaded.current || !wrapperRef.current) return;
+    loaded.current = true;
 
     try {
-      // Set global atOptions for Adsterra
-      (window as any).atOptions = atOptions;
-
-      // Create and inject script
       const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = `//www.highperformanceformat.com/${atOptions.key}/invoke.js`;
       script.async = true;
-      containerRef.current.appendChild(script);
-      scriptRef.current = script;
+      script.setAttribute("data-cfasync", "false");
+      script.src = scriptSrc;
+      wrapperRef.current.appendChild(script);
     } catch (error) {
       console.warn("Adsterra ad failed to load:", error);
     }
 
     return () => {
-      // Cleanup on unmount
-      try {
-        if (scriptRef.current && scriptRef.current.parentNode) {
-          scriptRef.current.parentNode.removeChild(scriptRef.current);
-          scriptRef.current = null;
-        }
-      } catch {
-        // Silent cleanup failure
-      }
+      loaded.current = false;
     };
-  }, [atOptions.key]);
+  }, [scriptSrc]);
 
   return (
     <section className={`py-6 bg-zinc-950 ${className}`}>
@@ -56,10 +37,12 @@ const AdsterraNativeBanner = ({ atOptions, className = "" }: AdsterraNativeBanne
             Sponsored
           </p>
           <div
-            ref={containerRef}
+            ref={wrapperRef}
             className="rounded-xl border border-border/50 bg-card/30 overflow-hidden"
-            style={{ minHeight: atOptions.height || 250 }}
-          />
+            style={{ minHeight: 250 }}
+          >
+            <div id={containerId} />
+          </div>
         </div>
       </div>
     </section>

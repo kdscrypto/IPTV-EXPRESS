@@ -9,22 +9,8 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
-// Adsterra Native Banner configurations — replace keys with your Adsterra dashboard keys
-const nativeBannerConfig1 = {
-  key: "YOUR_ADSTERRA_KEY_1",
-  format: "iframe",
-  height: 250,
-  width: 0,
-  params: {},
-};
-
-const nativeBannerConfig2 = {
-  key: "YOUR_ADSTERRA_KEY_2",
-  format: "iframe",
-  height: 250,
-  width: 0,
-  params: {},
-};
+const ADSTERRA_SCRIPT = "https://pl28780500.effectivegatecpm.com/461c8750f350c5a00ad18c1d8833917a/invoke.js";
+const ADSTERRA_CONTAINER = "container-461c8750f350c5a00ad18c1d8833917a";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -88,7 +74,7 @@ const Index = () => {
         <FeaturesSection />
         
         {/* Native Banner Ad #1 — between Features and Pricing */}
-        <AdsterraNativeBanner atOptions={nativeBannerConfig1} />
+        <AdsterraNativeBanner scriptSrc={ADSTERRA_SCRIPT} containerId={ADSTERRA_CONTAINER} />
 
         <PricingSection onSelectPlan={handleSelectPlan} />
 
@@ -103,7 +89,7 @@ const Index = () => {
         </section>
 
         {/* Native Banner Ad #2 — between FAQ and Contact */}
-        <AdsterraNativeBanner atOptions={nativeBannerConfig2} />
+        <AdsterraNativeBanner scriptSrc={ADSTERRA_SCRIPT} containerId={`${ADSTERRA_CONTAINER}-2`} />
 
         <ContactSection />
       </main>
