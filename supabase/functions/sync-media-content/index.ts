@@ -25,8 +25,11 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = 'https://gbssebvzecsgcfjlqtqp.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdic3NlYnZ6ZWNzZ2NmamxxdHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxNjcwMDgsImV4cCI6MjA3MTc0MzAwOH0.NBaNJ4mMtRieOhzbxY-MlYgWJg0Fzsvqe6ZLUiKA4rQ';
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing required Supabase configuration');
+    }
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const tmdbApiKey = Deno.env.get('TMDB_API_KEY');
@@ -229,8 +232,8 @@ serve(async (req) => {
     console.error('Sync error:', error);
 
     // Log error
-    const supabaseUrl = 'https://gbssebvzecsgcfjlqtqp.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdic3NlYnZ6ZWNzZ2NmamxxdHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxNjcwMDgsImV4cCI6MjA3MTc0MzAwOH0.NBaNJ4mMtRieOhzbxY-MlYgWJg0Fzsvqe6ZLUiKA4rQ';
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     await supabase

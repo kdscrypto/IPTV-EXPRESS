@@ -100,6 +100,21 @@ serve(async (req) => {
 
     console.log('Creating payment for:', { planId, planName, price, email, payCurrency });
 
+    // Rate limiting: max 5 orders per email per hour
+    const { data: recentOrders } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('email', email)
+      .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString())
+      .limit(6);
+
+    if (recentOrders && recentOrders.length >= 5) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Too many payment requests. Please try again in an hour.' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+      );
+    }
+
     // Create payment with NOWPayments
     const nowPaymentResponse = await fetch('https://api.nowpayments.io/v1/payment', {
       method: 'POST',
