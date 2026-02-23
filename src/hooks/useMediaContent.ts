@@ -99,9 +99,6 @@ export const useMediaContent = (): UseMediaContentReturn => {
 
   useEffect(() => {
     fetchContent();
-    
-    // Trigger initial sync
-    triggerSync();
 
     // Set up real-time subscription
     const channel = supabase
@@ -119,14 +116,8 @@ export const useMediaContent = (): UseMediaContentReturn => {
       )
       .subscribe();
 
-    // Auto-refresh every 30 minutes
-    const interval = setInterval(() => {
-      triggerSync();
-    }, 30 * 60 * 1000);
-
     return () => {
       supabase.removeChannel(channel);
-      clearInterval(interval);
     };
   }, []);
 
