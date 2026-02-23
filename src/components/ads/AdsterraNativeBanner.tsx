@@ -7,27 +7,33 @@ interface AdsterraNativeBannerProps {
 }
 
 const AdsterraNativeBanner = ({ scriptSrc, containerId, className = "" }: AdsterraNativeBannerProps) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const loaded = useRef(false);
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
-    if (loaded.current || !wrapperRef.current) return;
-    loaded.current = true;
+    // Avoid duplicate injection
+    if (document.querySelector(`script[src="${scriptSrc}"][data-container="${containerId}"]`)) {
+      return;
+    }
 
     try {
       const script = document.createElement("script");
       script.async = true;
       script.setAttribute("data-cfasync", "false");
+      script.setAttribute("data-container", containerId);
       script.src = scriptSrc;
-      wrapperRef.current.appendChild(script);
+      document.body.appendChild(script);
+      scriptRef.current = script;
     } catch (error) {
       console.warn("Adsterra ad failed to load:", error);
     }
 
     return () => {
-      loaded.current = false;
+      if (scriptRef.current && scriptRef.current.parentNode) {
+        scriptRef.current.parentNode.removeChild(scriptRef.current);
+        scriptRef.current = null;
+      }
     };
-  }, [scriptSrc]);
+  }, [scriptSrc, containerId]);
 
   return (
     <section className={`py-6 bg-zinc-950 ${className}`}>
@@ -37,7 +43,6 @@ const AdsterraNativeBanner = ({ scriptSrc, containerId, className = "" }: Adster
             Sponsored
           </p>
           <div
-            ref={wrapperRef}
             className="rounded-xl border border-border/50 bg-card/30 overflow-hidden"
             style={{ minHeight: 90 }}
           >
