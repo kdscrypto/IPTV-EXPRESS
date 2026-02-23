@@ -1,46 +1,83 @@
 
-# Restauration du fond dynamique TMDB dans le HeroSection
 
-## Problème identifié
+# Integration des Native Banners Adsterra
 
-Lors de la refonte Stitch, le composant `DynamicBackground` (qui affiche les affiches de films/séries/sports récents provenant de l'API TMDB) a été entièrement supprimé du `HeroSection.tsx` et remplacé par une image fixe `hero-image.jpg`.
+## Objectif
+Integrer des publicites Native Banner d'Adsterra sur le site de maniere non intrusive, en preservant le design dark/streaming existant et sans impacter les fonctionnalites (formulaire contact, checkout, navigation, animation TMDB).
 
-La capture d'écran de référence montre clairement que le fond doit afficher les affiches de contenus TMDB qui défilent automatiquement (films, séries, sport) — visibles comme un "mur de posters" côté droit du hero.
+## Composant a creer
 
-## Solution
+### `src/components/ads/AdsterraNativeBanner.tsx`
+Composant reutilisable et isole qui :
+- Accepte une prop `atOptions` (objet de configuration Adsterra : `key`, `format`, `height`, `width`, `params`)
+- Utilise `useEffect` pour injecter dynamiquement le script Adsterra (`createElement('script')`) dans un conteneur `ref`
+- Nettoie le script au demontage (cleanup dans `useEffect`) pour eviter les fuites memoire
+- Affiche un conteneur avec `min-height` pour eviter le layout shift pendant le chargement
+- S'integre visuellement au theme sombre : fond `bg-zinc-950`, bordures `border-zinc-800/50`, coins arrondis
+- Ajoute un petit label discret "Sponsored" en haut pour la transparence
 
-Réintégrer `DynamicBackground` dans `HeroSection.tsx` en l'adaptant au nouveau design Stitch : le fond dynamique des affiches remplace l'image fixe, avec le texte et le CTA positionnés côté gauche par-dessus.
+### Points techniques importants
+- Le script Adsterra sera charge via `document.createElement('script')` et non via `dangerouslySetInnerHTML` (plus propre et plus facile a nettoyer)
+- Le composant sera enveloppe dans un `div` responsive : pleine largeur sur mobile, `max-w-4xl` centre sur desktop
+- Un `try/catch` protege l'injection du script pour eviter qu'un echec publicitaire ne casse le site
 
-## Fichier à modifier : `src/components/HeroSection.tsx`
+## Emplacements dans `src/pages/Index.tsx`
 
-### Changements
-
-1. **Supprimer** l'import et l'usage de `heroImage` (image fixe)
-2. **Importer** `DynamicBackground`
-3. **Remplacer** le `<img>` statique et ses overlays par `<DynamicBackground />`
-4. **Adapter** les overlays : le `DynamicBackground` gère déjà ses propres gradients, mais on ajoutera un overlay supplémentaire `from-black via-black/70 to-transparent` de gauche à droite pour garantir la lisibilité du texte côté gauche, en cohérence avec le nouveau design
-
-### Résultat attendu
+Deux emplacements strategiques, places entre les sections de contenu :
 
 ```text
-HeroSection (min-h-screen)
-├── [Couche 0] DynamicBackground — affiches TMDB qui défilent (opacity 30%)
-│                                  + gradients intégrés
-├── [Couche 1] Overlay noir gauche → transparent (lisibilité texte)
-└── [Couche 2] Contenu texte (z-10)
-    ├── Badge "Premium IPTV Service"
-    ├── Titre "IPTV Express"
-    ├── Sous-titre "Access over 15,000 Channels..."
-    ├── Bouton CTA "Get Started Now"
-    └── Trust badges (4K | No Buffering | 50,000+)
+HomeNavbar
+HeroSection
+FeaturesSection
+>>> Native Banner #1 <<<
+PricingSection
+Testimonials + FAQ
+>>> Native Banner #2 <<<
+ContactSection
+Footer
 ```
 
-Le fond animé TMDB sera visible à droite du hero (là où les gradients sont moins opaques), créant l'effet "mur de posters" visible dans votre capture de référence.
+**Pourquoi ces emplacements :**
+- **Entre Features et Pricing** : l'utilisateur a vu les fonctionnalites, la pub se place naturellement avant la decision d'achat, sans interrompre le flux de conversion
+- **Entre FAQ et Contact** : zone de "respiration" apres les informations, avant le formulaire de contact
 
-## Résumé
+**Emplacements evites volontairement :**
+- Pas sur le HeroSection (ne pas masquer l'animation TMDB)
+- Pas dans/autour du PricingSection (ne pas distraire pendant la conversion)
+- Pas sur la page `/checkout` (ne pas perturber le paiement)
+- Pas sur la page `/prelanding` (page d'acquisition, doit rester epuree)
+
+## Pages exclues
+- `/checkout` : page de paiement, aucune pub
+- `/prelanding` : page d'acquisition, aucune pub
+- `/admin` : dashboard admin, aucune pub
+
+Les pubs ne seront ajoutees que dans `Index.tsx` (page `/home`).
+
+## Configuration Adsterra
+
+Le composant utilisera des valeurs placeholder pour `atOptions.key`. L'utilisateur devra :
+1. Se connecter au dashboard Adsterra
+2. Creer un placement "Native Banner"
+3. Recuperer la cle (`key`) fournie
+4. Remplacer les valeurs placeholder dans le code
+
+## Impact sur les fonctionnalites existantes
+
+| Fonctionnalite | Impact |
+|---|---|
+| Animation TMDB (HeroSection) | Aucun -- pub placee apres FeaturesSection |
+| Formulaire de contact | Aucun -- pub placee avant ContactSection, pas a l'interieur |
+| Checkout / paiement | Aucun -- pas de pub sur `/checkout` |
+| Navigation (HomeNavbar) | Aucun -- navbar fixe non modifiee |
+| SEO (JSON-LD) | Aucun -- structured data non modifie |
+| Prelanding | Aucun -- pas de pub sur `/prelanding` |
+| Performance | Minimal -- scripts charges en `async`, cleanup au demontage |
+
+## Fichiers modifies
 
 | Fichier | Action |
-|---------|--------|
-| `src/components/HeroSection.tsx` | Remplacer image fixe par `DynamicBackground` + ajuster overlay gauche |
+|---|---|
+| `src/components/ads/AdsterraNativeBanner.tsx` | Creer -- composant reutilisable |
+| `src/pages/Index.tsx` | Modifier -- ajouter 2 emplacements de Native Banner entre les sections |
 
-Aucune autre modification nécessaire — `DynamicBackground.tsx` et `useMediaContent.ts` sont intacts et fonctionnels.
