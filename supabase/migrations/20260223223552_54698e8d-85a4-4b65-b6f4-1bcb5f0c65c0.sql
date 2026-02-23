@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users can view orders by email" ON public.orders;
