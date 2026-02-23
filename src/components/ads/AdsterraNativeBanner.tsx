@@ -39,7 +39,7 @@ const AdsterraNativeBanner = ({ scriptSrc, containerId, className = "" }: Adster
           <div
             ref={wrapperRef}
             className="rounded-xl border border-border/50 bg-card/30 overflow-hidden"
-            style={{ minHeight: 250 }}
+            style={{ minHeight: 90 }}
           >
             <div id={containerId} />
           </div>
