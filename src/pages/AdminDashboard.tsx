@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import AdminStats from '@/components/admin/AdminStats';
 import OrdersTable from '@/components/admin/OrdersTable';
 import RevenueChart from '@/components/admin/RevenueChart';
+import ContactMessages from '@/components/admin/ContactMessages';
 import { 
   ShieldCheck, 
   LogOut, 
@@ -15,7 +16,8 @@ import {
   LayoutDashboard, 
   ShoppingCart,
   BarChart3,
-  Home
+  Home,
+  MessageSquare
 } from 'lucide-react';
 
 interface Order {
@@ -122,7 +124,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsList className="grid w-full max-w-lg grid-cols-4">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Aperçu</span>
@@ -130,6 +132,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="orders" className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4" />
               <span className="hidden sm:inline">Commandes</span>
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Messages</span>
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -167,6 +173,10 @@ const AdminDashboard = () => {
             ) : (
               <OrdersTable orders={orders} onRefresh={fetchOrders} />
             )}
+          </TabsContent>
+
+          <TabsContent value="messages">
+            <ContactMessages />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
