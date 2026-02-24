@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AdsterraNativeBannerProps {
   scriptSrc: string;
@@ -7,32 +7,48 @@ interface AdsterraNativeBannerProps {
 }
 
 const AdsterraNativeBanner = ({ scriptSrc, containerId, className = "" }: AdsterraNativeBannerProps) => {
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [adLoaded, setAdLoaded] = useState(false);
 
   useEffect(() => {
-    // Avoid duplicate injection
-    if (document.querySelector(`script[src="${scriptSrc}"][data-container="${containerId}"]`)) {
+    // Don't inject if already loaded globally for this container
+    const existingScript = document.querySelector(
+      `script[data-ad-container="${containerId}"]`
+    );
+    if (existingScript) {
+      setAdLoaded(true);
       return;
     }
 
-    try {
-      const script = document.createElement("script");
-      script.async = true;
-      script.setAttribute("data-cfasync", "false");
-      script.setAttribute("data-container", containerId);
-      script.src = scriptSrc;
-      document.body.appendChild(script);
-      scriptRef.current = script;
-    } catch (error) {
-      console.warn("Adsterra ad failed to load:", error);
-    }
-
-    return () => {
-      if (scriptRef.current && scriptRef.current.parentNode) {
-        scriptRef.current.parentNode.removeChild(scriptRef.current);
-        scriptRef.current = null;
+    // Wait for the container to be in the DOM before injecting
+    const timer = setTimeout(() => {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        console.warn(`Adsterra: container #${containerId} not found in DOM`);
+        return;
       }
-    };
+
+      try {
+        const script = document.createElement("script");
+        script.async = true;
+        script.setAttribute("data-cfasync", "false");
+        script.setAttribute("data-ad-container", containerId);
+        script.src = scriptSrc;
+
+        script.onload = () => setAdLoaded(true);
+        script.onerror = () => console.warn("Adsterra: script failed to load");
+
+        // Adsterra invoke.js must be appended to document.body
+        document.body.appendChild(script);
+      } catch (error) {
+        console.warn("Adsterra ad injection error:", error);
+      }
+    }, 100); // Small delay to ensure React has rendered the container
+
+    return () => clearTimeout(timer);
+    // Intentionally NOT removing the script on unmount:
+    // Adsterra scripts are designed to persist and removing them
+    // prevents ads from loading on SPA re-navigation.
   }, [scriptSrc, containerId]);
 
   return (
@@ -43,8 +59,9 @@ const AdsterraNativeBanner = ({ scriptSrc, containerId, className = "" }: Adster
             Sponsored
           </p>
           <div
+            ref={containerRef}
             className="rounded-xl border border-border/50 bg-card/30 overflow-hidden"
-            style={{ minHeight: 90 }}
+            style={{ minHeight: adLoaded ? undefined : 90 }}
           >
             <div id={containerId} />
           </div>
