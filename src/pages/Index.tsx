@@ -88,8 +88,12 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Native Banner Ad #2 — between FAQ and Contact */}
-        <AdsterraNativeBanner scriptSrc={ADSTERRA_SCRIPT} containerId={`${ADSTERRA_CONTAINER}-2`} />
+        {/* 
+          Native Banner Ad #2 removed: Adsterra requires a unique script/key 
+          per placement. To add a second banner, create a new Native Banner 
+          placement in your Adsterra dashboard and use its unique script URL 
+          and container ID here.
+        */}
 
         <ContactSection />
       </main>
